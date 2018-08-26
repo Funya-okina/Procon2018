@@ -2,7 +2,7 @@ import sys
 import os
 import numpy as np
 from ui.webUi import WebUi
-from controll.gameController import GameController
+from control.gameController import GameController
 
 np.set_printoptions(threshold=np.inf)
 
