@@ -1,0 +1,6 @@
+/.idea/
+/tmp/
+/bin/
+*.test
+*.swp
+/ui/web/vue.js
