@@ -12,7 +12,7 @@
 <body>
 
 <div id="app">
-  <div id="options">
+  <label id="options">
     <label>
       Row:
       <input type="text"
@@ -27,20 +27,40 @@
         v-model="options.column"
       >
     </label>
-    <label>
-      Vertical:
-      <input type="checkbox"
-             v-model="options.symmetry_v"
-      >
-    </label>
-    <label>
-      Horizontal:
-      <input type="checkbox"
-             v-model="options.symmetry_h"
-      >
-    </label>
+    <div id="symmetry-options">
+      <label>
+        Vertical:
+        <input type="checkbox"
+               v-model="options.symmetry_v"
+        >
+      </label>
+      <label>
+        Horizontal:
+        <input type="checkbox"
+               v-model="options.symmetry_h"
+        >
+      </label>
+    </div>
+    <button id="gen-scores" v-on:click="genScores()">Generate random board</button>
+    <div id="playerA-options">
+      <label>
+        Player A Port:
+        <input type="text"
+               v-model="options.player_A_port"
+        >
+      </label>
+      <button id="wait-client-A-button" v-on:click="waitClientA()">待機開始</button>
+    </div>
+    <div id="playerB-options">
+      <label>
+        Player B Port:
+        <input type="text"
+               v-model="options.player_B_port"
+        >
+      </label>
+      <button id="wait-client-B-button" v-on:click="waitClientB()">待機開始</button>
+    </div>
     <button id="game-start" v-on:click="gameStart()">Game Start</button>
-  </div>
   <table class="board" v-if="isDisplaying" v-cloak>
     <tr>
       <td class="guide-cell"></td>

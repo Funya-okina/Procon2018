@@ -13,23 +13,28 @@ const app = new Vue({
       row: 12,
       column: 12,
       symmetry_v: false,
-      symmetry_h: true
+      symmetry_h: true,
+      player_A_port: "25565",
+      player_B_port: "25566"
     }
   },
   methods: {
     gameStart: function() {
-      let symmetry_id = 0;
+    },
+      
+    genScores: function(){
+      let symmetry = 0;
       if(this.options.symmetry_v && this.options.symmetry_h){
-        symmetry_id = 2
+          symmetry = 2
       }else if(this.options.symmetry_v){
-        symmetry_id = 1
+          symmetry = 1
       }else if(this.options.symmetry_h){
-        symmetry_id = 0
+          symmetry = 0
       }else{
-        alert("対称設定が行われていません");
-        exit();
+          alert("対称設定が行われていません");
+          exit();
       }
-      eel.gameStart(this.options.row, this.options.column, symmetry_id);
+      eel.genScores(this.options.row, this.options.column, symmetry);
     },
 
     show: function(preparedCellScores) {
@@ -130,8 +135,8 @@ function getCellScore(row, column) {
 function closeWindow() {
   window.close();
 }
-
 eel.expose(showBoard);
 eel.expose(editCellAttrs);
 eel.expose(getCellScore);
 eel.expose(closeWindow);
+

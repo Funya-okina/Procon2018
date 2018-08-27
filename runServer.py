@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import socket
 from server.server_ui.webUi import WebUi
 from control.gameController import GameController
 
@@ -14,6 +15,8 @@ class UiPanel(object):
 
         self.webUi.addEvent("cellClicked", self.wasClicked)
         self.webUi.addEvent("gameStart", self.gameStart)
+        self.webUi.addEvent("genScores", self.genScores)
+        self.webUi.addEvent("getMyIPAddress", self.getMyIPAddress)
 
     def wasClicked(self, board_row, board_column):
         print(board_row, board_column)
@@ -21,15 +24,20 @@ class UiPanel(object):
         self.webUi.editCellAttrs(board_row, board_column, "a-area", True)
 
     def gameStart(self, board_row, board_column, symmetry_id=0):
-        # 本当はboard_cell_scoresはサーバープロセスから渡される
+        pass
+
+    def genScores(self, row, column, symmetry=0):
         controller = GameController()
-        board_cell_scores = controller.genScores_py(board_row, board_column, symmetry_id)
-        # -------------------------------------------------------------------
+        board_cell_scores = controller.genScores_py(row, column, symmetry)
         print(board_cell_scores)
         self.webUi.showBoard(board_cell_scores.tolist())
 
+
     def showWeb(self):
         self.webUi.showWindow()
+
+    def getMyIPAddress(self):
+        return socket.gethostbyname(socket.gethostname())
 
 
 if __name__ == "__main__":

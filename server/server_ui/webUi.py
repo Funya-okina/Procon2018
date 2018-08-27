@@ -12,9 +12,14 @@ class WebUi:
                 self.events["cellClicked"](row, column)
 
         @eel.expose
-        def gameStart(row, column, symmetry_id):
+        def gameStart(row, column, symmetry):
             if "gameStart" in self.events:
-                self.events["gameStart"](row, column, symmetry_id)
+                self.events["gameStart"](row, column, symmetry)
+
+        @eel.expose
+        def genScores(row, column, symmetry):
+            if "genScores" in self.events:
+                self.events["genScores"](row, column, symmetry)
 
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
