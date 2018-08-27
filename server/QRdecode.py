@@ -5,8 +5,8 @@ import numpy as np
 import cv2
 
 class QRdecoder:
-    def __init__(self):
-        self.cap = cv2.VideoCapture(0)
+    def __init__(self, camera_id):
+        self.cap = cv2.VideoCapture(camera_id)
 
     def reader(self):
         while(True):
@@ -19,7 +19,7 @@ class QRdecoder:
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 self.cap.release()
-                return -1
+                return None
         self.cap.release()
         cv2.destroyAllWindows()
         return qr_data[0][0].decode('utf-8', 'ignore')

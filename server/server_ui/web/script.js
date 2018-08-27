@@ -12,10 +12,14 @@ const app = new Vue({
     options: {
       row: 12,
       column: 12,
-      symmetry_v: false,
-      symmetry_h: true,
+      symmetry_v: true,
+      symmetry_h: false,
       player_A_port: "25565",
-      player_B_port: "25566"
+      player_B_port: "25566",
+      agent_row: 0,
+      agent_column: 0,
+      agent_symmetry_v: true,
+      agent_symmetry_h: false,
     }
   },
   methods: {
@@ -23,18 +27,31 @@ const app = new Vue({
     },
       
     genScores: function(){
-      let symmetry = 0;
+      let board_symmetry = 0;
       if(this.options.symmetry_v && this.options.symmetry_h){
-          symmetry = 2
+        board_symmetry = 2
       }else if(this.options.symmetry_v){
-          symmetry = 1
+        board_symmetry = 1
       }else if(this.options.symmetry_h){
-          symmetry = 0
+        board_symmetry = 0
       }else{
-          alert("対称設定が行われていません");
-          exit();
+        alert("対称設定が行われていません");
+        exit();
       }
-      eel.genScores(this.options.row, this.options.column, symmetry);
+
+      let agent_cell = [];
+      agent_cell[0] = [Number(this.options.agent_row), Number(this.options.agent_column)];
+      if(this.options.agent_symmetry_v && this.options.agent_symmetry_h){
+          agent_cell[1] = [Number(this.options.row-this.options.agent_row-1), Number(this.options.column-this.options.agent_column-1)]
+      }else if(this.options.agent_symmetry_v){
+          agent_cell[1] = [Number(this.options.row-this.options.agent_row-1), Number(this.options.agent_column)]
+      }else if(this.options.agent_symmetry_h){
+          agent_cell[1] = [Number(this.options.agent_row), Number(this.options.column-this.options.agent_column-1)]
+      }else{
+        alert("対称設定が行われていません");
+        exit();
+      }
+      eel.genScores(this.options.row, this.options.column, board_symmetry, agent_cell);
     },
     readQR: function(){
       eel.readQR();
@@ -80,7 +97,7 @@ const app = new Vue({
 
 
 
-function showBoard(cellScores) {
+function showBoard(cellScores, firstAgentsA, firstAgentsB) {
   const preparedCellScores = [];
   for (let i = 0; i < cellScores.length; i++) {
     preparedCellScores[i] = [];
@@ -99,6 +116,10 @@ function showBoard(cellScores) {
     }
   }
   app.show(preparedCellScores);
+  editCellAttrs(firstAgentsA[0][0], firstAgentsA[0][1], "a-tile", true);
+  editCellAttrs(firstAgentsA[1][0], firstAgentsA[1][1], "a-tile", true);
+  editCellAttrs(firstAgentsB[0][0], firstAgentsB[0][1], "b-tile", true);
+  editCellAttrs(firstAgentsB[1][0], firstAgentsB[1][1], "b-tile", true);
 }
 
 function editCellAttrs(row, column, attr, value) {

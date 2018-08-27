@@ -31,22 +31,53 @@
         </label>
       </div>
       <div id="symmetry-options">
-      <label>
-        Vertical:
-        <input type="checkbox"
-               v-model="options.symmetry_v"
-        >
-      </label>
-      <label>
-        Horizontal:
-        <input type="checkbox"
-               v-model="options.symmetry_h"
-        >
-      </label>
-      <button id="gen-scores" v-on:click="genScores()">Generate random board</button>
+        <label>
+          Board Vertical:
+          <input type="checkbox"
+                 v-model="options.symmetry_v"
+          >
+        </label>
+        <label>
+          Horizontal:
+          <input type="checkbox"
+                 v-model="options.symmetry_h"
+          >
+        </label>
       </div>
-      <button id="read-qr-scores" v-on:click="readQR()">Read QR code</button>
     </div>
+      <div id="agents-option">
+        <div>
+          <label>
+            My Agent 0:
+            row
+            <input type="text"
+                   pattern="^[0-9]{0,2}$"
+                   v-model="options.agent_row"
+            >
+            column
+            <input type="text"
+                   pattern="^[0-9]{0,2}$"
+                   v-model="options.agent_column"
+            >
+          </label>
+      </div>
+      <div id="agent-symmetry-options">
+        <label>
+          My Agent Vertical:
+          <input type="checkbox"
+                 v-model="options.agent_symmetry_v"
+          >
+        </label>
+        <label>
+          Horizontal:
+          <input type="checkbox"
+                 v-model="options.agent_symmetry_h"
+          >
+        </label>
+        <button id="gen-scores" v-on:click="genScores()">Generate random board</button>
+      </div>
+    </div>
+    <button id="read-qr-scores" v-on:click="readQR()">Read QR code</button>
     <div id="playerA-options">
       <label>
         Player A Port:

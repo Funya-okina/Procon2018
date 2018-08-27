@@ -17,9 +17,9 @@ class WebUi:
                 self.events["gameStart"](row, column, symmetry)
 
         @eel.expose
-        def genScores(row, column, symmetry):
+        def genScores(row, column, symmetry, agent_cell):
             if "genScores" in self.events:
-                self.events["genScores"](row, column, symmetry)
+                self.events["genScores"](row, column, symmetry, agent_cell)
 
         @eel.expose
         def readQR():
@@ -40,8 +40,8 @@ class WebUi:
         eel.closeWindow()
 
     @staticmethod
-    def showBoard(cell_scores: list):
-        eel.showBoard(cell_scores)
+    def showBoard(cell_scores: list, first_agents_a: list, first_agents_b: list):
+        eel.showBoard(cell_scores, first_agents_a, first_agents_b)
 
     @staticmethod
     def editCellAttrs(row: int, column: int, attr: str, value: bool):
