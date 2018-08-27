@@ -13,7 +13,7 @@
 
 <div id="app">
   <label id="options">
-    <div id="random-board-options">
+    <div id="board-options">
       <div id="size-options">
         <label>
           Row:
@@ -45,6 +45,7 @@
       </label>
       <button id="gen-scores" v-on:click="genScores()">Generate random board</button>
       </div>
+      <button id="read-qr-scores" v-on:click="readQR()">Read QR code</button>
     </div>
     <div id="playerA-options">
       <label>

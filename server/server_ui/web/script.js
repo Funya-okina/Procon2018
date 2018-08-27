@@ -36,6 +36,9 @@ const app = new Vue({
       }
       eel.genScores(this.options.row, this.options.column, symmetry);
     },
+    readQR: function(){
+      eel.readQR();
+    },
 
     show: function(preparedCellScores) {
       this.cellScores = preparedCellScores;

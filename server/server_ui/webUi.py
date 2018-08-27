@@ -21,6 +21,12 @@ class WebUi:
             if "genScores" in self.events:
                 self.events["genScores"](row, column, symmetry)
 
+        @eel.expose
+        def readQR():
+            print("call!")
+            if "readQR" in self.events:
+                self.events["readQR"]()
+
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
 
