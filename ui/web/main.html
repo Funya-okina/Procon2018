@@ -27,6 +27,18 @@
         v-model="options.column"
       >
     </label>
+    <label>
+      Vertical:
+      <input type="checkbox"
+             v-model="options.symmetry_v"
+      >
+    </label>
+    <label>
+      Horizontal:
+      <input type="checkbox"
+             v-model="options.symmetry_h"
+      >
+    </label>
     <button id="game-start" v-on:click="gameStart()">Game Start</button>
   </div>
   <table class="board" v-if="isDisplaying" v-cloak>
