@@ -13,21 +13,24 @@
 
 <div id="app">
   <label id="options">
-    <label>
-      Row:
-      <input type="text"
-        pattern="^[0-9]{0,2}$"
-        v-model="options.row"
-      >
-    </label>
-    <label>
-      Column:
-      <input type="text"
-        pattern="^[0-9]{0,2}$"
-        v-model="options.column"
-      >
-    </label>
-    <div id="symmetry-options">
+    <div id="random-board-options">
+      <div id="size-options">
+        <label>
+          Row:
+          <input type="text"
+            pattern="^[0-9]{0,2}$"
+            v-model="options.row"
+          >
+        </label>
+        <label>
+          Column:
+          <input type="text"
+            pattern="^[0-9]{0,2}$"
+            v-model="options.column"
+          >
+        </label>
+      </div>
+      <div id="symmetry-options">
       <label>
         Vertical:
         <input type="checkbox"
@@ -40,8 +43,9 @@
                v-model="options.symmetry_h"
         >
       </label>
+      <button id="gen-scores" v-on:click="genScores()">Generate random board</button>
+      </div>
     </div>
-    <button id="gen-scores" v-on:click="genScores()">Generate random board</button>
     <div id="playerA-options">
       <label>
         Player A Port:
