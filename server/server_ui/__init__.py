@@ -1,1 +1,1 @@
-from . import main_ui
+from . import server_ui

@@ -3,7 +3,7 @@ import eel
 
 class WebUi:
     def __init__(self):
-        eel.init("ui/web")
+        eel.init("server/server_ui/web")
         self.events = {}
 
         @eel.expose
