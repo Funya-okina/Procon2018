@@ -24,7 +24,7 @@ class UiPanel(object):
     def gameStart(self, board_row, board_column):
         # 本当はboard_cell_scoresはサーバープロセスから渡される
         controller = GameController()
-        board_cell_scores = controller.genScores_py(board_row, board_column)
+        board_cell_scores = controller.genScores(board_row, board_column, 1)
         # -------------------------------------------------------------------
         print(board_cell_scores)
         self.webUi.showBoard(board_cell_scores.tolist())
