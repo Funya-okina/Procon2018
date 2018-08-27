@@ -1,5 +1,4 @@
 import sys
-import os
 import numpy as np
 from ui.webUi import WebUi
 from control.gameController import GameController
@@ -21,10 +20,10 @@ class UiPanel(object):
         print(self.webUi.getCellScore(board_row, board_column))
         self.webUi.editCellAttrs(board_row, board_column, "a-area", True)
 
-    def gameStart(self, board_row, board_column):
+    def gameStart(self, board_row, board_column, symmetry_id=0):
         # 本当はboard_cell_scoresはサーバープロセスから渡される
         controller = GameController()
-        board_cell_scores = controller.genScores_py(board_row, board_column)
+        board_cell_scores = controller.genScores_py(board_row, board_column, symmetry_id)
         # -------------------------------------------------------------------
         print(board_cell_scores)
         self.webUi.showBoard(board_cell_scores.tolist())
