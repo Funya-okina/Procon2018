@@ -1,7 +1,4 @@
-import signal
-import sys
 import eel
-import socket
 
 
 class WebUi:
@@ -15,9 +12,9 @@ class WebUi:
                 self.events["cellClicked"](row, column)
 
         @eel.expose
-        def gameStart(row, column):
+        def gameStart(row, column, symmetry_id):
             if "gameStart" in self.events:
-                self.events["gameStart"](row, column)
+                self.events["gameStart"](row, column, symmetry_id)
 
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func

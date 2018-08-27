@@ -11,12 +11,25 @@ const app = new Vue({
     },
     options: {
       row: 12,
-      column: 12
+      column: 12,
+      symmetry_v: false,
+      symmetry_h: true
     }
   },
   methods: {
     gameStart: function() {
-      eel.gameStart(this.options.row, this.options.column);
+      let symmetry_id = 0;
+      if(this.options.symmetry_v && this.options.symmetry_h){
+        symmetry_id = 2
+      }else if(this.options.symmetry_v){
+        symmetry_id = 1
+      }else if(this.options.symmetry_h){
+        symmetry_id = 0
+      }else{
+        alert("対称設定が行われていません");
+        exit();
+      }
+      eel.gameStart(this.options.row, this.options.column, symmetry_id);
     },
 
     show: function(preparedCellScores) {

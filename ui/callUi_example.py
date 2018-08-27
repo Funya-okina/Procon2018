@@ -1,6 +1,4 @@
 import sys
-import os
-from PyQt5.Qt import *
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 from main_ui import Ui_Dialog

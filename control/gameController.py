@@ -39,8 +39,6 @@ class GameController():
 
         return self.board_cell_scores_np
 
-    # これが実用される
-    # symmetry 0 : 左右対称 1 : 上下対象 2 : 上下左右対称
     def genScores(self, row, column, symmetry):
         column = int(column)
         row = int(row)
@@ -77,7 +75,11 @@ class GameController():
         self.board_cell_scores = scores
         return self.board_cell_scores
 
+    # これが実用される
+    # symmetry 0 : 左右対称 1 : 上下対象 2 : 上下左右対称
     def genScores_py(self, row=12, column=12, symmetry=0):
+        column = int(column)
+        row = int(row)
 
         if symmetry == 0 or symmetry == 2:
             gen_column = column // 2
@@ -100,13 +102,13 @@ class GameController():
                 if random.randint(1, 8) == 8:
                     score = score * (-1)
                 row_scores.append(score)
-            if symmetry == 1 or symmetry == 2:
+            if symmetry == 0 or symmetry == 2:
                 if column % 2:
                     row_scores = row_scores + (row_scores[0:-1])[::-1]
                 else:
                     row_scores = row_scores + row_scores[::-1]
             self.board_cell_scores_py.append(row_scores)
-        if symmetry == 0 or symmetry == 2:
+        if symmetry == 1 or symmetry == 2:
             if row % 2:
                 self.board_cell_scores_py += (self.board_cell_scores_py[0:-1])[::-1]
             else:
