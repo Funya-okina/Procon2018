@@ -18,8 +18,8 @@ const app = new Vue({
       player_B_port: "25566",
       agent_row: 0,
       agent_column: 0,
-      agent_symmetry_v: true,
-      agent_symmetry_h: false,
+      agent_symmetry_v: false,
+      agent_symmetry_h: true,
       camera_id: 0,
     }
   },
