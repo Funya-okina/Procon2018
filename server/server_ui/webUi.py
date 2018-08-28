@@ -22,10 +22,10 @@ class WebUi:
                 self.events["genScores"](row, column, symmetry, agent_cell)
 
         @eel.expose
-        def readQR():
+        def readQR(camera_id):
             print("call!")
             if "readQR" in self.events:
-                self.events["readQR"]()
+                self.events["readQR"](int(camera_id))
 
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func

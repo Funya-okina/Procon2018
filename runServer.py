@@ -54,8 +54,8 @@ class Server(object):
             self.first_agent_cell_b[1] = [self.first_agent_cell_a[0][0], self.first_agent_cell_a[1][1]]
 
 
-    def readQR(self):
-        qr = QRdecoder(0)
+    def readQR(self, camera_id):
+        qr = QRdecoder(camera_id)
         read_code = qr.reader()
         if read_code is None:
             return

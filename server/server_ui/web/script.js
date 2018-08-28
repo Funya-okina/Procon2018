@@ -20,6 +20,7 @@ const app = new Vue({
       agent_column: 0,
       agent_symmetry_v: true,
       agent_symmetry_h: false,
+      camera_id: 0,
     }
   },
   methods: {
@@ -27,6 +28,14 @@ const app = new Vue({
     },
       
     genScores: function(){
+      if(((this.options.symmetry_v == this.options.agent_symmetry_v)
+          && !this.options.symmetry_h && !this.options.agent_symmetry_h)
+            || ((this.options.symmetry_h == this.options.agent_symmetry_h)
+              && !this.options.symmetry_v && !this.options.agent_symmetry_v)){
+        alert("ルールに適合しない設定です．");
+        exit();
+      }
+
       let board_symmetry = 0;
       if(this.options.symmetry_v && this.options.symmetry_h){
         board_symmetry = 2
@@ -54,7 +63,7 @@ const app = new Vue({
       eel.genScores(this.options.row, this.options.column, board_symmetry, agent_cell);
     },
     readQR: function(){
-      eel.readQR();
+      eel.readQR(this.options.camera_id);
     },
 
     show: function(preparedCellScores) {
