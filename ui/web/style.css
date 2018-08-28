@@ -2,6 +2,14 @@
   display:none;
 }
 
+.error {
+  color: #FF4B00;
+}
+
+.size-input {
+  width: 30px;
+}
+
 .board {
   border-collapse: collapse;
   /*border-width: medium;*/

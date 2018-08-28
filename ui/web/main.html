@@ -17,14 +17,16 @@
       Row:
       <input type="text"
         pattern="^[0-9]{0,2}$"
-        v-model="options.row"
+        class="size-input"
+        v-model.number="options.row"
       >
     </label>
     <label>
       Column:
       <input type="text"
         pattern="^[0-9]{0,2}$"
-        v-model="options.column"
+        class="size-input"
+        v-model.number="options.column"
       >
     </label>
     <label>
@@ -39,7 +41,31 @@
              v-model="options.symmetry_h"
       >
     </label>
-    <button id="game-start" v-on:click="gameStart()">Game Start</button>
+    <div
+      class="error"
+      v-if="options.row === ''"
+    >
+      Row の値が正しくありません
+    </div>
+    <div
+      class="error"
+      v-if="options.column === ''"
+    >
+      Column の値が正しくありません
+    </div>
+    <div
+      class="error"
+      v-if="checkSymmetryOption() === null"
+    >
+      対称設定が行われていません
+    </div>
+
+    <button
+      v-bind:disabled="!areGeneratableOptions()"
+      v-on:click="gameStart()"
+    >
+      Game start
+    </button>
   </div>
   <table class="board" v-if="isDisplaying" v-cloak>
     <tr>
