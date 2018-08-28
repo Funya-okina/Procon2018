@@ -27,7 +27,7 @@ const app = new Vue({
         symmetry_id = 0
       }else{
         alert("対称設定が行われていません");
-        exit();
+        return;
       }
       eel.gameStart(this.options.row, this.options.column, symmetry_id);
     },
