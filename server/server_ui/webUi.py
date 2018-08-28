@@ -31,6 +31,11 @@ class WebUi:
             if "getBoardScores" in self.events:
                 self.events["getBoardScores"]()
 
+        @eel.expose
+        def encodeQR():
+            if "encodeQR" in self.events:
+                self.events["encodeQR"]()
+
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
 

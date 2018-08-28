@@ -1,8 +1,11 @@
 import sys
+import os
 import numpy as np
 import socket
+from datetime import datetime
 from server.server_ui.webUi import WebUi
-from server.QRdecode import QRdecoder
+from server.QRLib import decodeQR
+from server.QRLib import encodeQR
 from control.Board import Board
 
 np.set_printoptions(threshold=np.inf)
@@ -18,8 +21,10 @@ class Server(object):
         self.webUi.addEvent("gameStart", self.gameStart)
         self.webUi.addEvent("genScores", self.genScores)
         self.webUi.addEvent("getMyIPAddress", self.getMyIPAddress)
-        self.webUi.addEvent("readQR", self.readQR)
+        self.webUi.addEvent("readQR", self.decodeQR)
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
+        self.webUi.addEvent("encodeQR", self.encodeQR)
+
         self.board = Board()
 
     def wasClicked(self, board_row, board_column):
@@ -39,9 +44,9 @@ class Server(object):
         self.setUIBoard()
 
 
-    def readQR(self, camera_id):
-        qr = QRdecoder(camera_id)
-        read_code = qr.reader()
+    def decodeQR(self, camera_id):
+        qr = decodeQR(camera_id)
+        read_code = qr.decoder()
         if read_code is None:
             return
         code_list = read_code.split(":")
@@ -59,6 +64,21 @@ class Server(object):
         self.board.printBoardScore()
         self.setUIBoard()
 
+    def encodeQR(self):
+        qr = encodeQR()
+        board_scores = self.board.getBoardScores()
+        board_size = self.board.getBoardSize()
+        agents_a = self.board.getFirstAgentsLocation()[0]
+        data_list = []
+        data_list.append(" ".join(map(str, map(lambda x:x+1, board_size))))
+        for row_scores in board_scores:
+            data_list.append(" ".join(map(str, row_scores)))
+        for agent in agents_a:
+            data_list.append(" ".join(map(str, map(lambda x:x+1, agent))))
+
+        data = "{}:".format(":".join(data_list))
+        qr.encoder(data, "{}/QRcodes".format(os.getcwd()), datetime.now().strftime("%Y%m%d%H%M%S_QR.png"))
+
     def moveAgent(self, agent_name, movement):
         pass
 
@@ -72,7 +92,7 @@ class Server(object):
         return socket.gethostbyname(socket.gethostname())
 
     def getBoardScores(self):
-        print(self.board.board_scores)
+        return self.board.getBoardScores()
 
 
 if __name__ == "__main__":

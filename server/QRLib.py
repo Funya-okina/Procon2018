@@ -1,14 +1,15 @@
 from pyzbar.pyzbar import decode
+import qrcode
 from PIL import Image
 import os
 import numpy as np
 import cv2
 
-class QRdecoder:
+class decodeQR:
     def __init__(self, camera_id):
         self.cap = cv2.VideoCapture(camera_id)
 
-    def reader(self):
+    def decoder(self):
         while(True):
             ret, frame = self.cap.read()
             cv2.imshow('frame', frame)
@@ -24,7 +25,20 @@ class QRdecoder:
         cv2.destroyAllWindows()
         return qr_data[0][0].decode('utf-8', 'ignore')
 
+
+class encodeQR:
+    def __init__(self):
+        self.qr = qrcode.QRCode()
+
+    def encoder(self, data, path, file_name):
+        self.qr.add_data(data)
+        self.qr.make()
+        img = self.qr.make_image()
+        img.save(r"{}/{}".format(path, file_name))
+
+
+
 if __name__ == "__main__":
-    qr = QRdecoder()
-    read_data = qr.reader()
+    qr = decodeQR(0)
+    read_data = qr.decoder()
     print(read_data)

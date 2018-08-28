@@ -11,8 +11,8 @@ class Board:
         self.board_scores = []
 
     def initBoardSize(self, row, column):
-        self.row = row
-        self.column = column
+        self.row = int(row)
+        self.column = int(column)
 
     def initBoardScores(self, scores):
         self.board_scores = scores
@@ -75,8 +75,11 @@ class Board:
                 print("{: 3}".format(score), end="")
             print("")
 
-    def getBoardsize(self):
+    def getBoardSize(self):
         return [self.row, self.column]
+
+    def getBoardScores(self):
+        return self.board_scores
 
     def getFirstAgentsLocation(self):
         return [self.first_agent_cell_a, self.first_agent_cell_b]
