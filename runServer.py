@@ -2,8 +2,8 @@ import sys
 import numpy as np
 import socket
 from server.server_ui.webUi import WebUi
-from control.gameController import GameController
 from server.QRdecode import QRdecoder
+from control.Board import Board
 
 np.set_printoptions(threshold=np.inf)
 
@@ -19,11 +19,8 @@ class Server(object):
         self.webUi.addEvent("genScores", self.genScores)
         self.webUi.addEvent("getMyIPAddress", self.getMyIPAddress)
         self.webUi.addEvent("readQR", self.readQR)
-
-        self.row = 12
-        self.column = 12
-        self.first_agent_cell_a = [[0, 0], [0, 1]]
-        self.first_agent_cell_b = [[1, 0], [1, 1]]
+        self.webUi.addEvent("getBoardScores", self.getBoardScores)
+        self.board = Board()
 
     def wasClicked(self, board_row, board_column):
         print(board_row, board_column)
@@ -33,25 +30,13 @@ class Server(object):
     def gameStart(self, board_row, board_column, symmetry_id=0):
         pass
 
-    def genScores(self, row, column, symmetry=0, agent_a=[[0, 0], [0, 1]]):
-        controller = GameController()
-        board_cell_scores = controller.genScores_py(row, column, symmetry)
-        print(board_cell_scores)
-        self.registerAgentCell(agent_a, int(row)-1, int(column)-1)
-        self.webUi.showBoard(board_cell_scores.tolist(), self.first_agent_cell_a, self.first_agent_cell_b)
-
-    def registerAgentCell(self, agents_a, row, column):
-        self.first_agent_cell_a[0] = agents_a[0]
-        self.first_agent_cell_a[1] = agents_a[1]
-        if self.first_agent_cell_a[0][0] == self.first_agent_cell_a[1][0]:
-            self.first_agent_cell_b[0] = [row-self.first_agent_cell_a[0][0], self.first_agent_cell_a[0][1]]
-            self.first_agent_cell_b[1] = [row-self.first_agent_cell_a[1][0], self.first_agent_cell_a[1][1]]
-        elif self.first_agent_cell_a[0][1] == self.first_agent_cell_a[1][1]:
-            self.first_agent_cell_b[0] = [self.first_agent_cell_a[0][0], column-self.first_agent_cell_a[0][1]]
-            self.first_agent_cell_b[1] = [self.first_agent_cell_a[1][0], column-self.first_agent_cell_a[1][1]]
-        else:
-            self.first_agent_cell_b[0] = [self.first_agent_cell_a[1][0], self.first_agent_cell_a[0][1]]
-            self.first_agent_cell_b[1] = [self.first_agent_cell_a[0][0], self.first_agent_cell_a[1][1]]
+    def genScores(self, row, column, symmetry, agents_a):
+        self.board.initBoardSize(row, column)
+        self.board.genScores(symmetry)
+        # agents_a = [list(map(lambda x: x-1, agents_a[0])), list(map(lambda x: x-1, agents_a[1]))]
+        self.board.setFirstAgentCell(agents_a)
+        self.board.printBoardScore()
+        self.setUIBoard()
 
 
     def readQR(self, camera_id):
@@ -60,30 +45,34 @@ class Server(object):
         if read_code is None:
             return
         code_list = read_code.split(":")
-        row, column = code_list[:1][0].split()
-        agents_a = [list(map(lambda x: x - 1, map(int, code_list[-3].split()))), list(map(lambda x: x - 1, map(int, code_list[-2].split())))]
-        self.registerAgentCell(agents_a, row, column)
+        row, column = list(map(int, code_list[:1][0].split()))
+        self.board.initBoardSize(row-1, column-1)
+        agents_a = [list(map(lambda x: x-1, map(int, code_list[-3].split()))), list(map(lambda x: x-1, map(int, code_list[-2].split())))]
+        self.board.setFirstAgentCell(agents_a)
 
         score_data = code_list[1:][:-3]
         board_cell_scores = []
         for row_scores in score_data:
             row_scores_list = list(map(int, row_scores.split()))
-            print(row_scores_list)
             board_cell_scores.append(row_scores_list)
-        print(self.first_agent_cell_a, self.first_agent_cell_b)
-        self.webUi.showBoard(board_cell_scores, self.first_agent_cell_a, self.first_agent_cell_b)
+        self.board.initBoardScores(board_cell_scores)
+        self.board.printBoardScore()
+        self.setUIBoard()
 
     def moveAgent(self, agent_name, movement):
-        pass
-
-    def initAgent(self, agents_dict):
         pass
 
     def showWeb(self):
         self.webUi.showWindow()
 
+    def setUIBoard(self):
+        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cell_a, self.board.first_agent_cell_b)
+
     def getMyIPAddress(self):
         return socket.gethostbyname(socket.gethostname())
+
+    def getBoardScores(self):
+        print(self.board.board_scores)
 
 
 if __name__ == "__main__":

@@ -23,9 +23,13 @@ class WebUi:
 
         @eel.expose
         def readQR(camera_id):
-            print("call!")
             if "readQR" in self.events:
                 self.events["readQR"](int(camera_id))
+
+        @eel.expose
+        def getBoardScores():
+            if "getBoardScores" in self.events:
+                self.events["getBoardScores"]()
 
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
