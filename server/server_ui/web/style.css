@@ -58,3 +58,10 @@
     height: 40px;
     text-align: center;
 }
+
+.error {
+  color: #FF4B00;
+}
+ .size-input {
+  width: 30px;
+}

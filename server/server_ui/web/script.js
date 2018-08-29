@@ -45,7 +45,7 @@ const app = new Vue({
         board_symmetry = 0
       }else{
         alert("対称設定が行われていません");
-        exit();
+        return;
       }
 
       let agent_cell = [];

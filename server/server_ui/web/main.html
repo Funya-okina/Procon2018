@@ -18,13 +18,15 @@
         <label>
           Row:
           <input type="number"
-            v-model="options.row"
+                 class="size-input"
+                 v-model.number="options.row"
           >
         </label>
         <label>
           Column:
           <input type="number"
-            v-model="options.column"
+                 class="size-input"
+                 v-model.number="options.column"
           >
         </label>
       </div>
@@ -49,11 +51,13 @@
             My Agent 0:
             row
             <input type="number"
-                   v-model="options.agent_row"
+                   class="size-input"
+                   v-model.number="options.agent_row"
             >
             column
             <input type="number"
-                   v-model="options.agent_column"
+                   class="size-input"
+                   v-model.number="options.agent_column"
             >
           </label>
       </div>
@@ -77,7 +81,8 @@
       <label>
         Camera ID:
         <input type="number"
-               v-model="options.camera_id"
+               class="size-input"
+               v-model.number="options.camera_id"
         >
       </label>
     <button id="read-qr-scores" v-on:click="readQR()">Read QR code</button>
@@ -85,7 +90,7 @@
       <label>
         Player A Port:
         <input type="number"
-               v-model="options.player_A_port"
+               v-model.number="options.player_A_port"
         >
       </label>
       <button id="wait-client-A-button" v-on:click="waitClientA()">待機開始</button>
@@ -94,7 +99,7 @@
       <label>
         Player B Port:
         <input type="number"
-               v-model="options.player_B_port"
+               v-model.number="options.player_B_port"
         >
       </label>
       <button id="wait-client-B-button" v-on:click="waitClientB()">待機開始</button>
@@ -106,7 +111,7 @@
       <td class="guide-cell"></td>
       <td
         class="guide-cell"
-        v-for="i in cellScores.length"
+        v-for="i in cellScores[0].length"
         v-bind:class="{ 'focused-cell': isMouseoverRelatedCell(null, i - 1) || isMouseoverCell(null, i - 1) }"
         v-on:mouseover="cellMouseover(null, i - 1)"
         v-on:mouseout="cellMouseout(null, i -1)"
@@ -131,9 +136,10 @@
           'focused-cell': isMouseoverCell(i, j),
           'focus-related-cell': isMouseoverRelatedCell(i, j),
           'a0-present-cell': cellScores[i][j].isA0Present,
-          'a1-present-cell': cellScores[i][j].isA0Present,
-          'b0-present-cell': cellScores[i][j].isA0Present,
-          'b0-present-cell': cellScores[i][j].isA0Present,
+          'a1-present-cell': cellScores[i][j].isA1Present,
+          'b0-present-cell': cellScores[i][j].isB0Present,
+          'b1-present-cell': cellScores[i][j].isB1Present,
+
           'a-area-cell': cellScores[i][j].isAArea,
           'b-area-cell': cellScores[i][j].isBArea,
           'a-tile-cell': cellScores[i][j].isATile,
