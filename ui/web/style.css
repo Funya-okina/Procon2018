@@ -2,59 +2,63 @@
   display:none;
 }
 
+.error {
+  color: #FF4B00;
+}
+
+.size-input {
+  width: 30px;
+}
+
 .board {
-    border-collapse: collapse;
-    /*border-width: medium;*/
-    /*border-color: black;*/
+  border-collapse: collapse;
+  /*border-width: medium;*/
+  /*border-color: black;*/
 }
 
 .guide-cell {
-    background-color: #d3d3d3;
+  background-color: #d3d3d3;
 }
 
 .focused-cell {
-    background-color: #00ff91;
+  background-color: #00ff91;
 }
 
 .focus-related-cell {
-    background-color: #ccffe9;
+  background-color: #ccffe9;
 }
 
-/*.guide-cell.focus-related-cell {*/
-    /*background-color: #00ff91;*/
-/*}*/
-
 .selected-cell {
-    background-color: #338bff !important;
+  background-color: #338bff !important;
 }
 
 .a0-present-cell, .a1-present-cell {
-    background-color: #338bff !important;
+  background-color: #338bff !important;
 }
 
 .a-area-cell {
-    background-color: #338bff !important;
+  background-color: #338bff !important;
 }
 
 .a-tile-cell {
-    background-color: #99c5ff !important;
+  background-color: #99c5ff !important;
 }
 
 .b0-present-cell, .b1-present-cell {
-    background-color: #ff338b !important;
+  background-color: #ff338b !important;
 }
 
 .b-area-cell {
-    background-color: #ff338b !important;
+  background-color: #ff338b !important;
 }
 
 .b-tile-cell {
-    background-color: #ff99c5 !important;
+  background-color: #ff99c5 !important;
 }
 
 .score-cell, .guide-cell{
-   border: solid 1px gray;
-    width: 40px;
-    height: 40px;
-    text-align: center;
+  border: solid 1px gray;
+  width: 40px;
+  height: 40px;
+  text-align: center;
 }

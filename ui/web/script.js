@@ -17,19 +17,26 @@ const app = new Vue({
     }
   },
   methods: {
-    gameStart: function() {
-      let symmetry_id = 0;
-      if(this.options.symmetry_v && this.options.symmetry_h){
-        symmetry_id = 2
-      }else if(this.options.symmetry_v){
-        symmetry_id = 1
-      }else if(this.options.symmetry_h){
-        symmetry_id = 0
-      }else{
-        alert("対称設定が行われていません");
-        exit();
+    checkSymmetryOption: function() {
+      if (this.options.symmetry_v && this.options.symmetry_h) {
+        return 2;
+      } else if (this.options.symmetry_v) {
+        return 1;
+      } else if(this.options.symmetry_h) {
+        return 0;
+      } else {
+        return null
       }
-      eel.gameStart(this.options.row, this.options.column, symmetry_id);
+    },
+
+    areGeneratableOptions: function() {
+      return this.options.row !== ""
+        && this.options.column !== ""
+        && this.checkSymmetryOption() !== null
+    },
+
+    gameStart: function() {
+      eel.gameStart(this.options.row, this.options.column, this.checkSymmetryOption());
     },
 
     show: function(preparedCellScores) {

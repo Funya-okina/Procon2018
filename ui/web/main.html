@@ -15,16 +15,18 @@
   <div id="options">
     <label>
       Row:
-      <input type="text"
-        pattern="^[0-9]{0,2}$"
-        v-model="options.row"
+      <input
+        type="number"
+        class="size-input"
+        v-model.number="options.row"
       >
     </label>
     <label>
       Column:
-      <input type="text"
-        pattern="^[0-9]{0,2}$"
-        v-model="options.column"
+      <input
+        type="number"
+        class="size-input"
+        v-model.number="options.column"
       >
     </label>
     <label>
@@ -39,14 +41,38 @@
              v-model="options.symmetry_h"
       >
     </label>
-    <button id="game-start" v-on:click="gameStart()">Game Start</button>
+    <div
+      class="error"
+      v-if="options.row === ''"
+    >
+      Row の値が正しくありません
+    </div>
+    <div
+      class="error"
+      v-if="options.column === ''"
+    >
+      Column の値が正しくありません
+    </div>
+    <div
+      class="error"
+      v-if="checkSymmetryOption() === null"
+    >
+      対称設定が行われていません
+    </div>
+
+    <button
+      v-bind:disabled="!areGeneratableOptions()"
+      v-on:click="gameStart()"
+    >
+      Game start
+    </button>
   </div>
   <table class="board" v-if="isDisplaying" v-cloak>
     <tr>
       <td class="guide-cell"></td>
       <td
         class="guide-cell"
-        v-for="i in cellScores.length"
+        v-for="i in cellScores[0].length"
         v-bind:class="{ 'focused-cell': isMouseoverRelatedCell(null, i - 1) || isMouseoverCell(null, i - 1) }"
         v-on:mouseover="cellMouseover(null, i - 1)"
         v-on:mouseout="cellMouseout(null, i -1)"
@@ -71,9 +97,9 @@
           'focused-cell': isMouseoverCell(i, j),
           'focus-related-cell': isMouseoverRelatedCell(i, j),
           'a0-present-cell': cellScores[i][j].isA0Present,
-          'a1-present-cell': cellScores[i][j].isA0Present,
-          'b0-present-cell': cellScores[i][j].isA0Present,
-          'b0-present-cell': cellScores[i][j].isA0Present,
+          'a1-present-cell': cellScores[i][j].isA1Present,
+          'b0-present-cell': cellScores[i][j].isB0Present,
+          'b1-present-cell': cellScores[i][j].isB1Present,
           'a-area-cell': cellScores[i][j].isAArea,
           'b-area-cell': cellScores[i][j].isBArea,
           'a-tile-cell': cellScores[i][j].isATile,
