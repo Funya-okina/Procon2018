@@ -25,6 +25,7 @@ Mac OS (ネット情報．動作未確認)
 brew install zbar
 ```
 
+全部できたら
 ```
 python runServer.py
 ```
