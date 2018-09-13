@@ -11,6 +11,7 @@ class Board:
         self.board_scores = []
 
     def initBoardSize(self, row, column):
+        print("初期化受け取りデータ:", row, column)
         self.row = int(row)
         self.column = int(column)
 

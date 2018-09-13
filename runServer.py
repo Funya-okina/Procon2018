@@ -36,7 +36,9 @@ class Server(object):
         pass
 
     def genScores(self, row, column, symmetry, agents_a):
+        print("生成受け渡しデータ:", row, column)
         self.board.initBoardSize(row, column)
+        print(agents_a)
         self.board.genScores(symmetry)
         # agents_a = [list(map(lambda x: x-1, agents_a[0])), list(map(lambda x: x-1, agents_a[1]))]
         self.board.setFirstAgentCell(agents_a)
@@ -51,8 +53,10 @@ class Server(object):
             return
         code_list = read_code.split(":")
         row, column = list(map(int, code_list[:1][0].split()))
-        self.board.initBoardSize(row-1, column-1)
+        print("読取受け渡しデータ:", row, column)
+        self.board.initBoardSize(row, column)
         agents_a = [list(map(lambda x: x-1, map(int, code_list[-3].split()))), list(map(lambda x: x-1, map(int, code_list[-2].split())))]
+        print(agents_a)
         self.board.setFirstAgentCell(agents_a)
 
         score_data = code_list[1:][:-3]
@@ -70,13 +74,14 @@ class Server(object):
         board_size = self.board.getBoardSize()
         agents_a = self.board.getFirstAgentsLocation()[0]
         data_list = []
-        data_list.append(" ".join(map(str, map(lambda x:x+1, board_size))))
+        data_list.append(" ".join(map(str, board_size)))
         for row_scores in board_scores:
             data_list.append(" ".join(map(str, row_scores)))
         for agent in agents_a:
             data_list.append(" ".join(map(str, map(lambda x:x+1, agent))))
 
         data = "{}:".format(":".join(data_list))
+        print(data)
         qr.encoder(data, "{}/QRcodes".format(os.getcwd()), datetime.now().strftime("%Y%m%d%H%M%S_QR.png"))
 
     def moveAgent(self, agent_name, movement):
