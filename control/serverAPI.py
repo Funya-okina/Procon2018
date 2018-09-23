@@ -3,8 +3,8 @@ import socket
 
 class gameServer:
 
-    def __init__(self):
-        self.port = 25565
+    def __init__(self, port):
+        self.port = port
 
     def startServer(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -18,10 +18,10 @@ class gameServer:
                         data = conn.recv(1024)
                         if not data:
                             break
-                        print('data : {}, addr: {}'.format(data, addr))
+                        print('data : {}, addr : {}'.format(data, addr))
                         conn.sendall(b'Received: ' + data)
 
 
 if __name__ == "__main__":
-    serv = gameServer()
+    serv = gameServer(25565)
     serv.startServer()
