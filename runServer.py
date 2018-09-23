@@ -45,7 +45,6 @@ class Server(object):
         self.board.printBoardScore()
         self.setUIBoard()
 
-
     def decodeQR(self, camera_id):
         qr = decodeQR(camera_id)
         read_code = qr.decoder()
