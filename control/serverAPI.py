@@ -1,27 +1,22 @@
+from __future__ import print_function
 import socket
+import time
+from contextlib import closing
 
 
-class gameServer:
-
-    def __init__(self, port):
-        self.port = port
-
-    def startServer(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind(('127.0.0.1', self.port))
-            s.listen(1)
-
-            while True:
-                conn, addr = s.accept()
-                with conn:
-                    while True:
-                        data = conn.recv(1024)
-                        if not data:
-                            break
-                        print('data : {}, addr : {}'.format(data, addr))
-                        conn.sendall(b'Received: ' + data)
+def main():
+    host = '127.0.0.1'
+    port = 25565
+    count = 0
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    with closing(sock):
+        while True:
+            message = 'Hello world : {0}'.format(count).encode('utf-8')
+            print(message)
+            sock.sendto(message, (host, port))
+            count += 1
+            time.sleep(1)
 
 
-if __name__ == "__main__":
-    serv = gameServer(25565)
-    serv.startServer()
+if __name__ == '__main__':
+    main()

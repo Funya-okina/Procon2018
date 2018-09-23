@@ -1,38 +1,53 @@
 import sys
 import numpy as np
-from ui.webUi import WebUi
-from control.gameController import GameController
+from client.client_ui.webUi import WebUi
+from control.Board import Board
 
 np.set_printoptions(threshold=np.inf)
 
 
-class UiPanel(object):
-    player_turn = 'A'
+class Client(object):
 
     def __init__(self, parent=None):
         self.webUi = WebUi()
 
         self.webUi.addEvent("cellClicked", self.wasClicked)
         self.webUi.addEvent("gameStart", self.gameStart)
+        self.webUi.addEvent("getBoardScores", self.getBoardScores)
+
+        self.board = Board()
 
     def wasClicked(self, board_row, board_column):
         print(board_row, board_column)
         print(self.webUi.getCellScore(board_row, board_column))
-        self.webUi.editCellAttrs(board_row, board_column, "a-area", True)
+        self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
 
-    def gameStart(self, board_row, board_column, symmetry_id=0):
-        # 本当はboard_cell_scoresはサーバープロセスから渡される
-        controller = GameController()
-        board_cell_scores = controller.genScores_py(board_row, board_column, symmetry_id)
-        # -------------------------------------------------------------------
-        print(board_cell_scores)
-        self.webUi.showBoard(board_cell_scores.tolist())
+    def gameStart(self):
+        print('gamestart!')
+
+    def genScores(self, row, column, symmetry, agents_a):
+        print("生成受け渡しデータ:", row, column)
+        self.board.initBoardSize(row, column)
+        print(agents_a)
+        self.board.genScores(symmetry)
+        self.board.setFirstAgentCell(agents_a)
+        self.board.printBoardScore()
+        self.setUIBoard()
+
+    def moveAgent(self, agent_name, movement):
+        pass
 
     def showWeb(self):
         self.webUi.showWindow()
 
+    def setUIBoard(self):
+        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cell_a, self.board.first_agent_cell_b)
+
+    def getBoardScores(self):
+        return self.board.getBoardScores()
+
 
 if __name__ == "__main__":
-    window = UiPanel()
+    window = Client()
     window.showWeb()
     sys.exit()

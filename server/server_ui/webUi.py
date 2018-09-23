@@ -12,9 +12,9 @@ class WebUi:
                 self.events["cellClicked"](row, column)
 
         @eel.expose
-        def gameStart(row, column, symmetry):
+        def gameStart():
             if "gameStart" in self.events:
-                self.events["gameStart"](row, column, symmetry)
+                self.events["gameStart"]()
 
         @eel.expose
         def genScores(row, column, symmetry, agent_cell):
@@ -43,7 +43,8 @@ class WebUi:
     def showWindow():
         web_app_options = {
             'mode': 'chrome-app',
-            'host': 'localhost'
+            'host': 'localhost',
+            'port': 8001
         }
         eel.start("main.html", options=web_app_options)
         eel.closeWindow()

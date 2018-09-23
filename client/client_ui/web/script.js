@@ -5,76 +5,9 @@ const app = new Vue({
     data: {
         isDisplaying: false,
         cellScores: [],
-        mouseoverCell: {
-            row: null,
-            column: null
-        },
-        options: {
-            row: 12,
-            column: 12,
-            symmetry_v: true,
-            symmetry_h: false,
-            player_A_port: 25565,
-            player_B_port: 25566,
-            agent_row: 0,
-            agent_column: 0,
-            agent_symmetry_v: false,
-            agent_symmetry_h: true,
-            camera_id: 0,
-        }
+        port: 25565,
     },
     methods: {
-        gameStart: function () {
-            eel.gameStart();
-        },
-
-        genScores: function () {
-            if (((this.options.symmetry_v == this.options.agent_symmetry_v)
-                && !this.options.symmetry_h && !this.options.agent_symmetry_h)
-                || ((this.options.symmetry_h == this.options.agent_symmetry_h)
-                    && !this.options.symmetry_v && !this.options.agent_symmetry_v)) {
-                alert("ルールに適合しない設定です．");
-                exit();
-            }
-
-            let board_symmetry = 0;
-            if (this.options.symmetry_v && this.options.symmetry_h) {
-                board_symmetry = 2
-            } else if (this.options.symmetry_v) {
-                board_symmetry = 1
-            } else if (this.options.symmetry_h) {
-                board_symmetry = 0
-            } else {
-                alert("対称設定が行われていません");
-                return;
-            }
-
-            let agent_cell = [];
-            agent_cell[0] = [Number(this.options.agent_row), Number(this.options.agent_column)];
-            if (this.options.agent_symmetry_v && this.options.agent_symmetry_h) {
-                agent_cell[1] = [Number(this.options.row - this.options.agent_row - 1), Number(this.options.column - this.options.agent_column - 1)]
-            } else if (this.options.agent_symmetry_v) {
-                agent_cell[1] = [Number(this.options.row - this.options.agent_row - 1), Number(this.options.agent_column)]
-            } else if (this.options.agent_symmetry_h) {
-                agent_cell[1] = [Number(this.options.agent_row), Number(this.options.column - this.options.agent_column - 1)]
-            } else {
-                alert("対称設定が行われていません");
-                exit();
-            }
-            eel.genScores(this.options.row, this.options.column, board_symmetry, agent_cell);
-        },
-        readQR: function () {
-            eel.readQR(this.options.camera_id);
-        },
-
-        getBoardScores: function () {
-            eel.getBoardScores();
-        },
-
-        encodeQR: function () {
-            eel.encodeQR();
-        },
-
         show: function (preparedCellScores) {
             this.cellScores = preparedCellScores;
             this.isDisplaying = true;

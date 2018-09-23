@@ -12,7 +12,6 @@ np.set_printoptions(threshold=np.inf)
 
 
 class Server(object):
-    player_turn = 'A'
 
     def __init__(self, parent=None):
         self.webUi = WebUi()
@@ -32,15 +31,14 @@ class Server(object):
         print(self.webUi.getCellScore(board_row, board_column))
         self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
 
-    def gameStart(self, board_row, board_column, symmetry_id=0):
-        pass
+    def gameStart(self):
+        print('gamestart!')
 
     def genScores(self, row, column, symmetry, agents_a):
         print("生成受け渡しデータ:", row, column)
         self.board.initBoardSize(row, column)
         print(agents_a)
         self.board.genScores(symmetry)
-        # agents_a = [list(map(lambda x: x-1, agents_a[0])), list(map(lambda x: x-1, agents_a[1]))]
         self.board.setFirstAgentCell(agents_a)
         self.board.printBoardScore()
         self.setUIBoard()
@@ -97,6 +95,9 @@ class Server(object):
 
     def getBoardScores(self):
         return self.board.getBoardScores()
+
+    def standbyServer(self, port):
+        ...
 
 
 if __name__ == "__main__":
