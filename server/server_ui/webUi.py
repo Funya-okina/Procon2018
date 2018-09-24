@@ -36,6 +36,11 @@ class WebUi:
             if "encodeQR" in self.events:
                 self.events["encodeQR"]()
 
+        @eel.expose
+        def standbyPlayer(port, team):
+            if "standbyPlayer" in self.events:
+                self.events["standbyPlayer"](port, team)
+
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
 

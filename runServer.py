@@ -14,6 +14,7 @@ np.set_printoptions(threshold=np.inf)
 class Server(object):
 
     def __init__(self, parent=None):
+        #
         self.webUi = WebUi()
 
         self.webUi.addEvent("cellClicked", self.wasClicked)
@@ -23,6 +24,7 @@ class Server(object):
         self.webUi.addEvent("readQR", self.decodeQR)
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
         self.webUi.addEvent("encodeQR", self.encodeQR)
+        self.webUi.addEvent("standbyPlayer", self.standbyPlayer)
 
         self.board = Board()
 
@@ -96,8 +98,8 @@ class Server(object):
     def getBoardScores(self):
         return self.board.getBoardScores()
 
-    def standbyServer(self, port):
-        ...
+    def standbyPlayer(self, port, team):
+        print(port, team)
 
 
 if __name__ == "__main__":

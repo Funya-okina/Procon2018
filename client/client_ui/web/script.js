@@ -8,6 +8,10 @@ const app = new Vue({
         port: 25565,
     },
     methods: {
+        connectServer: function(){
+            eel.connectServer(this.port);
+        },
+
         show: function (preparedCellScores) {
             this.cellScores = preparedCellScores;
             this.isDisplaying = true;

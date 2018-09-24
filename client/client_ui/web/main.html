@@ -20,7 +20,7 @@
                v-model.number="port"
         >
       </label>
-      <button id="wait-client-A-button" v-on:click="waitClient()">待機開始</button>
+      <button id="connect" v-on:click="connectServer()">接続</button>
     </div>
   <Hr>
   <table class="board" v-if="isDisplaying" v-cloak>

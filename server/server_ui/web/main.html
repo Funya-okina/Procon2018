@@ -92,6 +92,7 @@
         <input type="number"
                v-model.number="options.player_A_port"
         >
+        <button id="standbyA" v-on:click="standbyA()">待機開始</button>
       </label>
     </div>
     <div id="playerB-options">
@@ -100,6 +101,7 @@
         <input type="number"
                v-model.number="options.player_B_port"
         >
+        <button id="standbyB" v-on:click="standbyB()">待機開始</button>
       </label>
     </div>
     <button id="game-start" v-on:click="gameStart()">Game Start</button>

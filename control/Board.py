@@ -1,4 +1,6 @@
 import random
+import numpy as np
+
 
 class Board:
     def __init__(self):
@@ -9,17 +11,20 @@ class Board:
         self.current_agents_cell_a = [[0, 0], [0, 1]]
         self.current_agents_cell_b = [[1, 0], [1, 1]]
         self.board_scores = []
+        self.team_a = []
+        self.team_b = []
 
     def initBoardSize(self, row, column):
         print("初期化受け取りデータ:", row, column)
         self.row = int(row)
         self.column = int(column)
+        self.team_a = self.team_b = [[0] * (column+1)] * (row+1)
+        print(self.team_a)
 
     def initBoardScores(self, scores):
         self.board_scores = scores
 
     def setFirstAgentCell(self, agents_a):
-        # agents_a = [[0, 0], [0, 11]]
         self.first_agent_cell_a[0] = agents_a[0]
         self.first_agent_cell_a[1] = agents_a[1]
         if self.first_agent_cell_a[0][0] == self.first_agent_cell_a[1][0]:
@@ -84,4 +89,3 @@ class Board:
 
     def getFirstAgentsLocation(self):
         return [self.first_agent_cell_a, self.first_agent_cell_b]
-

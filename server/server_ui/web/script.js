@@ -75,6 +75,14 @@ const app = new Vue({
             eel.encodeQR();
         },
 
+        standbyA: function(){
+            eel.standbyPlayer(this.options.player_A_port, 'A');
+        },
+
+        standbyB: function(){
+            eel.standbyPlayer(this.options.player_B_port, 'B');
+        },
+
         show: function (preparedCellScores) {
             this.cellScores = preparedCellScores;
             this.isDisplaying = true;

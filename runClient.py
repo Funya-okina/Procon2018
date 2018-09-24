@@ -12,8 +12,8 @@ class Client(object):
         self.webUi = WebUi()
 
         self.webUi.addEvent("cellClicked", self.wasClicked)
-        self.webUi.addEvent("gameStart", self.gameStart)
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
+        self.webUi.addEvent("connectServer", self.connectServer)
 
         self.board = Board()
 
@@ -21,9 +21,6 @@ class Client(object):
         print(board_row, board_column)
         print(self.webUi.getCellScore(board_row, board_column))
         self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
-
-    def gameStart(self):
-        print('gamestart!')
 
     def genScores(self, row, column, symmetry, agents_a):
         print("生成受け渡しデータ:", row, column)
@@ -45,6 +42,9 @@ class Client(object):
 
     def getBoardScores(self):
         return self.board.getBoardScores()
+
+    def connectServer(self, port):
+        print(port)
 
 
 if __name__ == "__main__":
