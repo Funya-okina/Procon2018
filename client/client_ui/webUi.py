@@ -3,8 +3,13 @@ import eel
 
 class WebUi:
     def __init__(self):
-        eel.init("server/server_ui/web")
+        eel.init("client/client_ui/web")
         self.events = {}
+
+        @eel.expose
+        def connectServer(port):
+            if "connectServer" in self.events:
+                self.events["connectServer"](port)
 
         @eel.expose
         def cellClicked(row, column):
@@ -12,34 +17,9 @@ class WebUi:
                 self.events["cellClicked"](row, column)
 
         @eel.expose
-        def gameStart():
-            if "gameStart" in self.events:
-                self.events["gameStart"]()
-
-        @eel.expose
-        def genScores(row, column, symmetry, agent_cell):
-            if "genScores" in self.events:
-                self.events["genScores"](row, column, symmetry, agent_cell)
-
-        @eel.expose
-        def readQR(camera_id):
-            if "readQR" in self.events:
-                self.events["readQR"](int(camera_id))
-
-        @eel.expose
         def getBoardScores():
             if "getBoardScores" in self.events:
                 self.events["getBoardScores"]()
-
-        @eel.expose
-        def encodeQR():
-            if "encodeQR" in self.events:
-                self.events["encodeQR"]()
-
-        @eel.expose
-        def standbyPlayer(port, team):
-            if "standbyPlayer" in self.events:
-                self.events["standbyPlayer"](port, team)
 
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
@@ -49,7 +29,7 @@ class WebUi:
         web_app_options = {
             'mode': 'chrome-app',
             'host': 'localhost',
-            'port': 8001
+            'port': 8000
         }
         eel.start("main.html", options=web_app_options)
         eel.closeWindow()
