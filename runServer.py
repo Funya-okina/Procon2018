@@ -7,6 +7,7 @@ from server.server_ui.webUi import WebUi
 from server.QRLib import decodeQR
 from server.QRLib import encodeQR
 from control.Board import Board
+from server.serverAPI import ServerAPI
 
 np.set_printoptions(threshold=np.inf)
 
@@ -24,7 +25,7 @@ class Server(object):
         self.webUi.addEvent("readQR", self.decodeQR)
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
         self.webUi.addEvent("encodeQR", self.encodeQR)
-        self.webUi.addEvent("standbyPlayer", self.standbyPlayer)
+        self.webUi.addEvent("standbyServer", self.standbyServer)
 
         self.board = Board()
 
@@ -98,8 +99,10 @@ class Server(object):
     def getBoardScores(self):
         return self.board.getBoardScores()
 
-    def standbyPlayer(self, port, team):
-        print(port, team)
+    def standbyServer(self, port):
+        self.server = ServerAPI()
+        self.server.makeSocket('', port)
+
 
 
 if __name__ == "__main__":

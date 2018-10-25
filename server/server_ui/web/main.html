@@ -86,22 +86,13 @@
         >
       </label>
     <button id="read-qr-scores" v-on:click="readQR()">Read QR code</button>
-    <div id="playerA-options">
+    <div id="server-options">
       <label>
-        Player A Port:
+        Server Port:
         <input type="number"
-               v-model.number="options.player_A_port"
+               v-model.number="options.server_port"
         >
-        <button id="standbyA" v-on:click="standbyA()">待機開始</button>
-      </label>
-    </div>
-    <div id="playerB-options">
-      <label>
-        Player B Port:
-        <input type="number"
-               v-model.number="options.player_B_port"
-        >
-        <button id="standbyB" v-on:click="standbyB()">待機開始</button>
+        <button id="standby" v-on:click="standby()">待機開始</button>
       </label>
     </div>
     <button id="game-start" v-on:click="gameStart()">Game Start</button>
@@ -132,7 +123,7 @@
         class="score-cell"
         v-for="(column, j) in row"
         v-bind:title="`${i}, ${j}`"
-        v-bind:class="{ 
+        v-bind:class="{
           'focused-cell': isMouseoverCell(i, j),
           'focus-related-cell': isMouseoverRelatedCell(i, j),
           'a0-present-cell': cellScores[i][j].isA0Present,
