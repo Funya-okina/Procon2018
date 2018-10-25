@@ -7,6 +7,7 @@ from enum import Enum, auto
 import json
 import socket
 import time
+import math
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
@@ -28,12 +29,14 @@ class Client(object):
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
         self.webUi.addEvent("connectServer", self.connectServer)
 
+        self.agent_behavior_step = 0
+
         self.board = Board()
         self.state = State.BeforeStart
         self.playng_thread = None
 
         # connections
-        self.player = "A"# "A" or "B"
+        self.team = "A" # "A" or "B"
         self.client_socket = None
         self.bsize = 1024
         self.receive_thread = None
@@ -41,42 +44,68 @@ class Client(object):
         self.was_recieved = False
         self.rcv_msg = ''
 
+    def isAroundCell(self, cell1, cell2):
+        return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
+
     def wasClicked(self, board_row, board_column):
-        print(board_row, board_column)
-        print(self.webUi.getCellScore(board_row, board_column))
-        self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
+        if self.team == "A":
+            i = 0
+            tile_color = "a-tile"
+            agent_color = "a{}-present".format(self.agent_behavior_step)
+        elif self.team == "B":
+            i = 1
+            tile_color = "b-tile"
+            agent_color = "b{}-present".format(self.agent_behavior_step)
 
-    def genScores(self, row, column, symmetry, agents_a):
-        print("生成受け渡しデータ:", row, column)
-        self.board.initBoardSize(row, column)
-        print(agents_a)
-        self.board.genScores(symmetry)
-        self.board.setFirstAgentCell(agents_a)
-        self.board.printBoardScore()
-        self.setUIBoard()
+        agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
+        if self.isAroundCell([board_row, board_column], agent):
+            self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+            self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+            if self.agent_behavior_step >= 1:
+                self.agent_behavior_step = 0
+            else:
+                self.agent_behavior_step += 1
+        else:
+            print("そこには移動できません.")
 
-    def moveAgent(self, agent_name, movement):
-        pass
+
+    def moveAgent(self):
+        if self.team == "A":
+            pass
+        elif self.team == "B":
+            pass
+
+    def setTile(self):
+        if self.team == "A":
+            pass
+        elif self.team == "B":
+            pass
+
+    def remomveTile(self):
+        if self.team == "A":
+            pass
+        elif self.team == "B":
+            pass
 
     def showWeb(self):
         self.webUi.showWindow(self.port_ui)
 
     def setUIBoard(self):
-        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cell_a, self.board.first_agent_cell_b)
+        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cells_a, self.board.first_agent_cells_b)
 
     def getBoardScores(self):
         return self.board.getBoardScores()
 
     # connections method
     def connectServer(self, port, team):
-        self.player = team
+        self.team = team
         addr = (self.host, port)
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect(addr)
 
         self.receive_thread = Thread(target=self.recieve)
         self.receive_thread.start()
-        self.send(self.player)
+        self.send(self.team)
 
     def recieve(self):
         while True:
@@ -87,9 +116,7 @@ class Client(object):
                     self.board.initBoardSize(*rcv_dict['size'])
                     self.board.setFirstAgentCell(rcv_dict['agents'][0])
                     self.board.initBoardScores(rcv_dict['scores'])
-                    self.board.printBoardScore()
                     self.setUIBoard()
-
             except OSError:
                 break
 

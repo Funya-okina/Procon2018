@@ -41,7 +41,7 @@ const app = new Vue({
         isMouseoverCell: function (row, column) {
             return this.mouseoverCell.row === row
                 && this.mouseoverCell.column === column
-                && row !== null
+               && row !== null
                 && column !== null;
         },
 
@@ -50,11 +50,11 @@ const app = new Vue({
                 && ((this.mouseoverCell.row === row && row !== null)
                     || (this.mouseoverCell.column === column && column !== null)
                 );
+        },
+        sendAction: function() {
         }
-
     }
 });
-
 
 function showBoard(cellScores, firstAgentsA, firstAgentsB) {
     const preparedCellScores = [];
@@ -75,10 +75,10 @@ function showBoard(cellScores, firstAgentsA, firstAgentsB) {
         }
     }
     app.show(preparedCellScores);
-    editCellAttrs(firstAgentsA[0][0], firstAgentsA[0][1], "a-tile", true);
-    editCellAttrs(firstAgentsA[1][0], firstAgentsA[1][1], "a-tile", true);
-    editCellAttrs(firstAgentsB[0][0], firstAgentsB[0][1], "b-tile", true);
-    editCellAttrs(firstAgentsB[1][0], firstAgentsB[1][1], "b-tile", true);
+    editCellAttrs(firstAgentsA[0][0], firstAgentsA[0][1], "a0-present", true);
+    editCellAttrs(firstAgentsA[1][0], firstAgentsA[1][1], "a1-present", true);
+    editCellAttrs(firstAgentsB[0][0], firstAgentsB[0][1], "b0-present", true);
+    editCellAttrs(firstAgentsB[1][0], firstAgentsB[1][1], "b1-present", true);
 }
 
 function editCellAttrs(row, column, attr, value) {
@@ -123,4 +123,3 @@ eel.expose(showBoard);
 eel.expose(editCellAttrs);
 eel.expose(getCellScore);
 eel.expose(closeWindow);
-

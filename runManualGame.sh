@@ -1,3 +1,3 @@
-python runServer.py &
-python runClient.py 8001 &
-python runClient.py 8002 &
+python ./crossing_cell_server.py &
+python ./crossing_cell_client.py 8001 &
+python ./crossing_cell_client.py 8002 &

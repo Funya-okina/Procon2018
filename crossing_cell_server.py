@@ -25,7 +25,6 @@ class Server(object):
 
         self.webUi = WebUi()
 
-        self.webUi.addEvent("cellClicked", self.wasClicked)
         self.webUi.addEvent("gameStart", self.gameStart)
         self.webUi.addEvent("genScores", self.genScores)
         self.webUi.addEvent("getMyIPAddress", self.getMyIPAddress)
@@ -54,7 +53,7 @@ class Server(object):
                         "order": "board_scores",
                         "scores": self.board.getBoardScores(),
                         "size": self.board.getBoardSize(),
-                        "agents": self.board.getFirstAgentsLocation(),
+                        "agents": self.board.getFirstAgentLocations(),
                     })
             self.state = State.Playing
             self.broadcast(bytes(json_data, 'utf8'))
@@ -67,19 +66,16 @@ class Server(object):
                 if self.isRecieved():
                     print(self.read())
 
-    def wasClicked(self, board_row, board_column):
-        print(board_row, board_column)
-        print(self.webUi.getCellScore(board_row, board_column))
-        self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
-
     def genScores(self, row, column, symmetry, agents_a):
         print("生成受け渡しデータ:", row, column)
         self.board.initBoardSize(row, column)
         print(agents_a)
         self.board.genScores(symmetry)
         self.board.setFirstAgentCell(agents_a)
-        self.board.printBoardScore()
         self.setUIBoard()
+        self.board.printBoardScore()
+        self.board.printTiles_A()
+        self.board.printTiles_B()
 
     def decodeQR(self, camera_id):
         qr = decodeQR(camera_id)
@@ -107,7 +103,7 @@ class Server(object):
         qr = encodeQR()
         board_scores = self.board.getBoardScores()
         board_size = self.board.getBoardSize()
-        agents_a = self.board.getFirstAgentsLocation()[0]
+        agents_a = self.board.getFirstAgentLocations()[0]
         data_list = []
         data_list.append(" ".join(map(str, board_size)))
         for row_scores in board_scores:
@@ -126,7 +122,7 @@ class Server(object):
         self.webUi.showWindow()
 
     def setUIBoard(self):
-        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cell_a, self.board.first_agent_cell_b)
+        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cells_a, self.board.first_agent_cells_b)
 
     def getMyIPAddress(self):
         return socket.gethostbyname(socket.gethostname())
@@ -172,6 +168,7 @@ class Server(object):
             if msg != bytes("{quit}", "utf8"):
                     self.was_recieved = True
                     self.rcv_msg = [msg.decode('utf8'), self.clients[client]]
+                    print(self.rcv_msg[0])
             else:
                 self.connected_player[player] = False
                 client.send(bytes("{quit}", "utf8"))
