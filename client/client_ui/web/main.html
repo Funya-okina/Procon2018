@@ -22,13 +22,16 @@
       </label>
         <div>
           <label>
-              Player Mode:
-            <input id="playerA" type="radio"
+              Player Mode :[
+            <label for="palyer-a">A:</label>
+            <input id="playerA" type="radio" id="player-a"
                    v-model.number="playerSelect" value=0
             >
-            <input id="playerB" type="radio"
+            <label for="palyer-b">B:</label>
+            <input id="playerB" type="radio" id="player-b"
                    v-model.number="playerSelect" value=1
             >
+            ]
           </label>
         </div>
       <button id="connect" v-on:click="connectServer()">接続</button>

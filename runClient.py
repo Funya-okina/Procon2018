@@ -45,7 +45,7 @@ class Client(object):
         return self.board.getBoardScores()
 
     def connectServer(self, port):
-        print(port)
+        pass
 
 
 if __name__ == "__main__":

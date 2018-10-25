@@ -6,7 +6,7 @@ const app = new Vue({
         isDisplaying: false,
         cellScores: [],
         port: 25565,
-
+        playerSelect: 0,
     },
     methods: {
         connectServer: function(){
