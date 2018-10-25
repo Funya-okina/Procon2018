@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <title>procon29-server</title>
+  <title>procon29-client</title>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="eel.js" defer></script>
   <script src="script.js" defer></script>
@@ -13,13 +13,24 @@
 
 <div id="app">
   <label id="options">
-    <div id="playerA-options">
+    <div id="player-options">
       <label>
         Port:
         <input type="number"
                v-model.number="port"
         >
       </label>
+        <div>
+          <label>
+              Player Mode:
+            <input id="playerA" type="radio"
+                   v-model.number="playerSelect" value=0
+            >
+            <input id="playerB" type="radio"
+                   v-model.number="playerSelect" value=1
+            >
+          </label>
+        </div>
       <button id="connect" v-on:click="connectServer()">接続</button>
     </div>
   <Hr>
@@ -49,7 +60,7 @@
         class="score-cell"
         v-for="(column, j) in row"
         v-bind:title="`${i}, ${j}`"
-        v-bind:class="{ 
+        v-bind:class="{
           'focused-cell': isMouseoverCell(i, j),
           'focus-related-cell': isMouseoverRelatedCell(i, j),
           'a0-present-cell': cellScores[i][j].isA0Present,

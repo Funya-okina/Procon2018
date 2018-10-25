@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 from client.client_ui.webUi import WebUi
+from client import clientAPI
 from control.Board import Board
 
 np.set_printoptions(threshold=np.inf)
