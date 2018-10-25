@@ -6,11 +6,11 @@ const app = new Vue({
         isDisplaying: false,
         cellScores: [],
         port: 25565,
-        playerSelect: 0,
+        team: "A",
     },
     methods: {
         connectServer: function(){
-            eel.connectServer(this.port);
+            eel.connectServer(this.port, this.team);
         },
 
         show: function (preparedCellScores) {
