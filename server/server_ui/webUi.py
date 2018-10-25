@@ -49,7 +49,7 @@ class WebUi:
         web_app_options = {
             'mode': 'chrome-app',
             'host': 'localhost',
-            'port': 8001
+            'port': 8000
         }
         eel.start("main.html", options=web_app_options)
         eel.closeWindow()
