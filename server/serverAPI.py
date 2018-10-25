@@ -46,7 +46,7 @@ class ServerAPI:
         while True:
             msg = client.recv(self.bufsize)
             if msg != bytes("{quit}", "utf8"):
-                print(msg.decode('utf8'))
+                    print(msg.decode('utf8'))
             else:
                 self.connected_player[player] = False
                 client.send(bytes("{quit}", "utf8"))
