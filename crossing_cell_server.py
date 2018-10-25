@@ -37,6 +37,8 @@ class Server(object):
 
         self.state = State.BeforeStart
 
+        self.turnBehavior = [False, False]
+
         # connections
         self.clients = {}
         self.addresses = {}
@@ -115,9 +117,6 @@ class Server(object):
         print(data)
         qr.encoder(data, "{}/QRcodes".format(os.getcwd()), datetime.now().strftime("%Y%m%d%H%M%S_QR.png"))
 
-    def moveAgent(self, agent_name, movement):
-        pass
-
     def showWeb(self):
         self.webUi.showWindow()
 
@@ -130,11 +129,33 @@ class Server(object):
     def getBoardScores(self):
         return self.board.getBoardScores()
 
-    def standbyServer(self, port):
-        self.makeSocket('', port)
+    def turnUpdate(self, client_update):
+        self.board.setCurrentAgentLocations(client_update['agent_location'], client_update['from'])
+        for x in client_update['remove_tiles']:
+            self.board.remove(x)
+
+        if client_update['from'] == "A":
+            self.turnBehavior[0] = True
+        elif client_update['from'] == "B":
+            self.turnBehavior[1] = True
+        if all(self.turnBehavior):
+            self.turnBehavior = [False, False]
+            self.nextTurn()
+
+    def nextTurn(self):
+        json_data = json.dumps({
+                    "order": "next_turn",
+                    "agents": self.board.getCurrentAgentLocations(),
+                    "tiles_a": self.board.team_a,
+                    "tiles_b": self.board.team_b
+                })
+        self.broadcast(bytes(json_data, 'utf8'))
 
 
     # connection method
+    def standbyServer(self, port):
+        self.makeSocket('', port)
+
     def makeSocket(self, host, port):
         addr = (host, port)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -167,8 +188,11 @@ class Server(object):
             msg = client.recv(self.bufsize)
             if msg != bytes("{quit}", "utf8"):
                     self.was_recieved = True
-                    self.rcv_msg = [msg.decode('utf8'), self.clients[client]]
-                    print(self.rcv_msg[0])
+                    self.rcv_msg = msg.decode('utf8')
+                    dict_data = json.loads(self.rcv_msg)
+                    if dict_data['order'] == "client_update":
+                        self.turnUpdate(dict_data)
+
             else:
                 self.connected_player[player] = False
                 client.send(bytes("{quit}", "utf8"))
@@ -178,6 +202,7 @@ class Server(object):
     def broadcast(self, msg):  # prefix is for name identification.
         for sock in self.clients:
             sock.send(msg)
+
 
     def isConnected(self):
         return all(self.connected_player.values())

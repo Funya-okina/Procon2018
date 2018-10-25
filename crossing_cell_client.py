@@ -8,6 +8,7 @@ import json
 import socket
 import time
 import math
+import copy
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
@@ -30,6 +31,8 @@ class Client(object):
         self.webUi.addEvent("connectServer", self.connectServer)
 
         self.agent_behavior_step = 0
+        self.new_agent_locations = [[0, 0], [0, 0]]
+        self.remove_tile_locations = []
 
         self.board = Board()
         self.state = State.BeforeStart
@@ -47,7 +50,7 @@ class Client(object):
     def isAroundCell(self, cell1, cell2):
         return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
 
-    def wasClicked(self, board_row, board_column):
+    def wasClicked(self, board_row, board_column, mode="move"):
         if self.team == "A":
             i = 0
             tile_color = "a-tile"
@@ -61,21 +64,28 @@ class Client(object):
         if self.isAroundCell([board_row, board_column], agent):
             self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
             self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+
             if self.agent_behavior_step >= 1:
+                self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step = 0
+                print(self.new_agent_locations)
+                json_data = json.dumps({
+                    "order": "client_update",
+                    "from": self.team,
+                    "agent_location": self.new_agent_locations,
+                    "remove_tiles": self.remove_tile_locations
+                })
+                self.send(json_data)
+                self.new_agent_locations = [[0, 0], [0, 0]]
+                self.remove_tile_locations = []
             else:
+                self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step += 1
         else:
             print("そこには移動できません.")
 
 
     def moveAgent(self):
-        if self.team == "A":
-            pass
-        elif self.team == "B":
-            pass
-
-    def setTile(self):
         if self.team == "A":
             pass
         elif self.team == "B":
@@ -112,11 +122,22 @@ class Client(object):
             try:
                 msg = self.client_socket.recv(self.bsize).decode("utf8")
                 rcv_dict = json.loads(msg)
-                if rcv_dict['order'] == 'board_scores':
+                order = rcv_dict['order']
+                if order == 'board_scores':
                     self.board.initBoardSize(*rcv_dict['size'])
                     self.board.setFirstAgentCell(rcv_dict['agents'][0])
                     self.board.initBoardScores(rcv_dict['scores'])
                     self.setUIBoard()
+                elif order == 'next_turn':
+                    self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
+                    self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
+                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    if self.team == "A":
+                        self.board.printTiles_A()
+                        self.board.printTiles_B()
+                    # self.updateUIBoard()
+
             except OSError:
                 break
 
