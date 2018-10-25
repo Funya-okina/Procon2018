@@ -12,6 +12,8 @@ class ServerAPI:
         self.server = None
         self.accept_thread = None
         self.connected_player = {"A": False, "B": False}
+        self.was_recieved = False
+        self.rcv_msg = []
 
     def makeSocket(self, host, port):
         addr = (host, port)
@@ -39,25 +41,32 @@ class ServerAPI:
             return
         self.connected_player[player] = True
         self.clients[client] = player
-        print("Player {} has joined.".format(player))
-        # msg = "Player %s has joined." % player
-        # self.broadcast(bytes(msg, "utf8"))
+        print("Player %s has joined." % player)
 
         while True:
             msg = client.recv(self.bufsize)
             if msg != bytes("{quit}", "utf8"):
-                    print(msg.decode('utf8'))
+                    self.was_recieved = True
+                    self.rcv_msg = [msg.decode('utf8'), self.clients[client]]
             else:
                 self.connected_player[player] = False
                 client.send(bytes("{quit}", "utf8"))
                 client.close()
                 del self.clients[client]
-                self.broadcast(bytes("%s has left the chat." % player, "utf8"))
-                break
 
-    def broadcast(self, msg, prefix=""):  # prefix is for name identification.
+    def broadcast(self, msg):  # prefix is for name identification.
         for sock in self.clients:
-            sock.send(bytes(prefix, "utf8")+msg)
+            sock.send(msg)
+
+    def isConnected(self):
+        return all(self.connected_player.values())
+
+    def read(self):
+        self.was_recieved = False
+        return self.rcv_msg
+
+    def isRecieved(self):
+        return self.was_recieved
 
 
 def call():

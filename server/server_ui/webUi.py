@@ -37,9 +37,9 @@ class WebUi:
                 self.events["encodeQR"]()
 
         @eel.expose
-        def standbyPlayer(port, team):
-            if "standbyPlayer" in self.events:
-                self.events["standbyPlayer"](port, team)
+        def standbyServer(port):
+            if "standbyServer" in self.events:
+                self.events["standbyServer"](port)
 
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
@@ -49,7 +49,7 @@ class WebUi:
         web_app_options = {
             'mode': 'chrome-app',
             'host': 'localhost',
-            'port': 8001
+            'port': 8000
         }
         eel.start("main.html", options=web_app_options)
         eel.closeWindow()

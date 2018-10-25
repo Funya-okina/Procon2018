@@ -7,14 +7,22 @@ from server.server_ui.webUi import WebUi
 from server.QRLib import decodeQR
 from server.QRLib import encodeQR
 from control.Board import Board
+from enum import Enum, auto
+import json
+import socket
+from threading import Thread
 
 np.set_printoptions(threshold=np.inf)
+
+class State(Enum):
+    BeforeStart = auto()
+    Playing = auto()
 
 
 class Server(object):
 
     def __init__(self, parent=None):
-        #
+
         self.webUi = WebUi()
 
         self.webUi.addEvent("cellClicked", self.wasClicked)
@@ -24,17 +32,45 @@ class Server(object):
         self.webUi.addEvent("readQR", self.decodeQR)
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
         self.webUi.addEvent("encodeQR", self.encodeQR)
-        self.webUi.addEvent("standbyPlayer", self.standbyPlayer)
+        self.webUi.addEvent("standbyServer", self.standbyServer)
 
         self.board = Board()
+
+        self.state = State.BeforeStart
+
+        # connections
+        self.clients = {}
+        self.addresses = {}
+        self.bufsize = 1024
+        self.server = None
+        self.accept_thread = None
+        self.connected_player = {"A": False, "B": False}
+        self.was_recieved = False
+        self.rcv_msg = []
+
+    def gameStart(self):
+        if self.isConnected():
+            json_data = json.dumps({
+                        "order": "board_scores",
+                        "scores": self.board.getBoardScores(),
+                        "size": self.board.getBoardSize(),
+                        "agents": self.board.getFirstAgentsLocation(),
+                    })
+            self.state = State.Playing
+            self.broadcast(bytes(json_data, 'utf8'))
+
+    def playing(self):
+        while True:
+            if self.state == State.BeforeStart:
+                pass
+            elif self.state == State.Playing:
+                if self.isRecieved():
+                    print(self.read())
 
     def wasClicked(self, board_row, board_column):
         print(board_row, board_column)
         print(self.webUi.getCellScore(board_row, board_column))
         self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
-
-    def gameStart(self):
-        print('gamestart!')
 
     def genScores(self, row, column, symmetry, agents_a):
         print("生成受け渡しデータ:", row, column)
@@ -98,8 +134,63 @@ class Server(object):
     def getBoardScores(self):
         return self.board.getBoardScores()
 
-    def standbyPlayer(self, port, team):
-        print(port, team)
+    def standbyServer(self, port):
+        self.makeSocket('', port)
+
+
+    # connection method
+    def makeSocket(self, host, port):
+        addr = (host, port)
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind(addr)
+        self.server.listen(2)
+        print("waiting connection...")
+        self.accept_thread = Thread(target=self.accept_incoming_connections)
+        self.accept_thread.start()
+        self.accept_thread.join()
+        self.server.close()
+
+    def accept_incoming_connections(self):
+        while True:
+            client, client_address = self.server.accept()
+            print("%s:%s has connected." % client_address)
+            self.addresses[client] = client_address
+            Thread(target=self.handle_client, args=(client,)).start()
+
+    def handle_client(self, client):  # Takes client socket as argument.
+        player = client.recv(self.bufsize).decode("utf8")
+        if self.connected_player[player]:
+            print("Player {} was connedted.".format(player))
+            client.close()
+            return
+        self.connected_player[player] = True
+        self.clients[client] = player
+        print("Player %s has joined." % player)
+
+        while True:
+            msg = client.recv(self.bufsize)
+            if msg != bytes("{quit}", "utf8"):
+                    self.was_recieved = True
+                    self.rcv_msg = [msg.decode('utf8'), self.clients[client]]
+            else:
+                self.connected_player[player] = False
+                client.send(bytes("{quit}", "utf8"))
+                client.close()
+                del self.clients[client]
+
+    def broadcast(self, msg):  # prefix is for name identification.
+        for sock in self.clients:
+            sock.send(msg)
+
+    def isConnected(self):
+        return all(self.connected_player.values())
+
+    def read(self):
+        self.was_recieved = False
+        return self.rcv_msg
+
+    def isRecieved(self):
+        return self.was_recieved
 
 
 if __name__ == "__main__":

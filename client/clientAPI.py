@@ -12,13 +12,15 @@ class ClientAPI:
         self.bsize = 1024
         self.receive_thread = None
         self.input_thread = None
+        self.was_recieved = False
+        self.rcv_msg = ''
 
     def connect(self, host, port):
         addr = (host, port)
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect(addr)
 
-        self.receive_thread = Thread(target=self.receive)
+        self.receive_thread = Thread(target=self.recieve)
         self.receive_thread.start()
         self.send(self.player)
         # self.input_thread= Thread(target=self.inputf)
@@ -29,12 +31,13 @@ class ClientAPI:
     #         msg = input()
     #         self.send(msg)
 
-    def receive(self):
+    def recieve(self):
         while True:
             try:
-                msg = self.client_socket.recv(self.bsize).decode("utf8")
-                print(msg)
-            except:
+                self.was_recieved = True
+                self.rcv_msg = self.client_socket.recv(self.bsize).decode("utf8")
+                print("recv:", self.rcv_msg)
+            except OSError:
                 break
 
     def send(self, msg):  # event is passed by binders.
@@ -42,6 +45,13 @@ class ClientAPI:
         time.sleep(1e-3)
         if msg == "{quit}":
             self.client_socket.close()
+
+    def read(self):
+        self.was_recieved = False
+        return self.rcv_msg
+
+    def isRecieved(self):
+        return self.was_recieved
 
 
 def call():

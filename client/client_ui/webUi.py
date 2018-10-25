@@ -7,9 +7,9 @@ class WebUi:
         self.events = {}
 
         @eel.expose
-        def connectServer(port):
+        def connectServer(port, team):
             if "connectServer" in self.events:
-                self.events["connectServer"](port)
+                self.events["connectServer"](port, team)
 
         @eel.expose
         def cellClicked(row, column):
@@ -25,11 +25,11 @@ class WebUi:
         self.events[event_name] = func
 
     @staticmethod
-    def showWindow():
+    def showWindow(port):
         web_app_options = {
             'mode': 'chrome-app',
             'host': 'localhost',
-            'port': 8000
+            'port': port
         }
         eel.start("main.html", options=web_app_options)
         eel.closeWindow()

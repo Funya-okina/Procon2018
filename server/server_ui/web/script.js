@@ -14,8 +14,7 @@ const app = new Vue({
             column: 12,
             symmetry_v: true,
             symmetry_h: false,
-            player_A_port: 25565,
-            player_B_port: 25566,
+            server_port: 25565,
             agent_row: 0,
             agent_column: 0,
             agent_symmetry_v: false,
@@ -75,12 +74,8 @@ const app = new Vue({
             eel.encodeQR();
         },
 
-        standbyA: function(){
-            eel.standbyPlayer(this.options.player_A_port, 'A');
-        },
-
-        standbyB: function(){
-            eel.standbyPlayer(this.options.player_B_port, 'B');
+        standby: function(){
+            eel.standbyServer(this.options.server_port);
         },
 
         show: function (preparedCellScores) {

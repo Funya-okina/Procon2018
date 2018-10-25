@@ -25,17 +25,20 @@
               Player Mode :[
             <label for="palyer-a">A:</label>
             <input id="playerA" type="radio" id="player-a"
-                   v-model.number="playerSelect" value=0
+                   v-model="team" value="A"
             >
             <label for="palyer-b">B:</label>
             <input id="playerB" type="radio" id="player-b"
-                   v-model.number="playerSelect" value=1
+                   v-model="team" value="B"
             >
             ]
+            {{ team }}
           </label>
         </div>
       <button id="connect" v-on:click="connectServer()">接続</button>
     </div>
+  </label>
+
   <Hr>
   <table class="board" v-if="isDisplaying" v-cloak>
     <tr>
