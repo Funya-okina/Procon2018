@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import socket
+import time
 from threading import Thread
 
 
 class ClientAPI:
 
-    def __init__(self):
+    def __init__(self, player):
+        self.player = player # "A" or "B"
         self.client_socket = None
         self.bsize = 1024
         self.receive_thread = None
@@ -18,20 +20,21 @@ class ClientAPI:
 
         self.receive_thread = Thread(target=self.receive)
         self.receive_thread.start()
-        self.input_thread= Thread(target=self.inputf)
-        self.input_thread.start()
+        self.send(str(self.player))
+        # self.input_thread= Thread(target=self.inputf)
+        # self.input_thread.start()
 
-    def inputf(self):
-        while True:
-            msg = input()
-            self.send(msg)
+    # def inputf(self):
+    #     while True:
+    #         msg = input()
+    #         self.send(msg)
 
     def receive(self):
         while True:
             try:
                 msg = self.client_socket.recv(self.bsize).decode("utf8")
                 print(msg)
-            except OSError:
+            except:
                 break
 
     def send(self, msg):  # event is passed by binders.
@@ -44,8 +47,12 @@ class ClientAPI:
 
 
 def call():
-    client = ClientAPI()
+    client = ClientAPI("A")
     client.connect('localhost', 25565)
+    for i in range(10):
+        time.sleep(1)
+        client.send("Hello {}".format(i))
+
 
 
 if __name__ == "__main__":

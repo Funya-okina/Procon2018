@@ -11,6 +11,7 @@ class ServerAPI:
         self.bufsize = 1024
         self.server = None
         self.accept_thread = None
+        self.connected_player = {"A": False, "B": False}
 
     def makeSocket(self, host, port):
         addr = (host, port)
@@ -27,27 +28,32 @@ class ServerAPI:
         while True:
             client, client_address = self.server.accept()
             print("%s:%s has connected." % client_address)
-            client.send(bytes("Now type your name and press enter!", "utf8"))
             self.addresses[client] = client_address
             Thread(target=self.handle_client, args=(client,)).start()
 
     def handle_client(self, client):  # Takes client socket as argument.
-        name = client.recv(self.bufsize).decode("utf8")
-        welcome = 'Welcome %s! If you ever want to quit, type {quit} to exit.' % name
-        client.send(bytes(welcome, "utf8"))
-        msg = "%s has joined the chat." % name
-        self.broadcast(bytes(msg, "utf8"))
-        self.clients[client] = name
+        player = client.recv(self.bufsize).decode("utf8")
+        if self.connected_player[player]:
+            print("Player {} was connedted.".format(player))
+            client.close()
+            return
+        self.connected_player[player] = True
+        self.clients[client] = player
+        print("Player {} has joined.".format(player))
+        # msg = "Player %s has joined." % player
+        # self.broadcast(bytes(msg, "utf8"))
 
         while True:
             msg = client.recv(self.bufsize)
+            print(msg.decode('utf8'))
             if msg != bytes("{quit}", "utf8"):
-                self.broadcast(msg, name+": ")
+                self.broadcast(msg, player+": ")
             else:
+                self.connected_player[player] = False
                 client.send(bytes("{quit}", "utf8"))
                 client.close()
                 del self.clients[client]
-                self.broadcast(bytes("%s has left the chat." % name, "utf8"))
+                self.broadcast(bytes("%s has left the chat." % player, "utf8"))
                 break
 
     def broadcast(self, msg, prefix=""):  # prefix is for name identification.
