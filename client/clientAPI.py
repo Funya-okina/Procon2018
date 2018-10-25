@@ -1,43 +1,58 @@
 #!/usr/bin/env python3
 import socket
+import time
 from threading import Thread
 
 
-def inputf():
-    while True:
-        msg = input()
-        send(msg)
+class ClientAPI:
+
+    def __init__(self, player):
+        self.player = player # "A" or "B"
+        self.client_socket = None
+        self.bsize = 1024
+        self.receive_thread = None
+        self.input_thread = None
+
+    def connect(self, host, port):
+        addr = (host, port)
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect(addr)
+
+        self.receive_thread = Thread(target=self.receive)
+        self.receive_thread.start()
+        self.send(self.player)
+        # self.input_thread= Thread(target=self.inputf)
+        # self.input_thread.start()
+
+    # def inputf(self):
+    #     while True:
+    #         msg = input()
+    #         self.send(msg)
+
+    def receive(self):
+        while True:
+            try:
+                msg = self.client_socket.recv(self.bsize).decode("utf8")
+                print(msg)
+            except:
+                break
+
+    def send(self, msg):  # event is passed by binders.
+        self.client_socket.send(bytes(msg, "utf8"))
+        time.sleep(1e-3)
+        if msg == "{quit}":
+            self.client_socket.close()
 
 
-def receive():
-    while True:
-        try:
-            msg = client_socket.recv(BUFSIZ).decode("utf8")
-            print(msg)
-        except OSError:
-            break
+def call():
+    client = ClientAPI("A")
+    client.connect('localhost', 25565)
+    for i in range(1000):
+        client.send("Hello {}".format(i))
+    client.send("{quit}")
 
 
-def send(msg):  # event is passed by binders.
-    client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
-        client_socket.close()
-
-
-def on_closing():
-    send("{quit}")
-
-
-PORT = 25565
-BUFSIZ = 1024
 
 if __name__ == "__main__":
-    host = input('Enter host: ')
-    addr = (host, PORT)
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(addr)
+    call()
 
-    receive_thread = Thread(target=receive)
-    receive_thread.start()
-    input_thread= Thread(target=inputf)
-    input_thread.start()
