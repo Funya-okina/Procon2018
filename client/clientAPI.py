@@ -20,7 +20,7 @@ class ClientAPI:
 
         self.receive_thread = Thread(target=self.receive)
         self.receive_thread.start()
-        self.send(str(self.player))
+        self.send(self.player)
         # self.input_thread= Thread(target=self.inputf)
         # self.input_thread.start()
 
@@ -39,19 +39,17 @@ class ClientAPI:
 
     def send(self, msg):  # event is passed by binders.
         self.client_socket.send(bytes(msg, "utf8"))
+        time.sleep(1e-3)
         if msg == "{quit}":
             self.client_socket.close()
-
-    def on_closing(self):
-        self.send("{quit}")
 
 
 def call():
     client = ClientAPI("A")
     client.connect('localhost', 25565)
-    for i in range(10):
-        time.sleep(1)
+    for i in range(1000):
         client.send("Hello {}".format(i))
+    client.send("{quit}")
 
 
 
