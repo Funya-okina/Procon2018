@@ -31,8 +31,10 @@ class Solver(object):
                 self.lake_score_buffer += self.find_lakes(x+diff[0], y+diff[1], num)
         return abs(self.board.getBoardScores()[x][y]) + self.lake_score_buffer
 
+    def set_board(self, in_board):
+        self.board = in_board
+
     def set_state(self):
-        self.board.genScores(0)
         self.state_init()
         for i in (0, solver.board.getBoardSize()[0]-1):
             for j in range(solver.board.getBoardSize()[1]):
@@ -50,6 +52,12 @@ class Solver(object):
                 if solver.state[i][j] == -1:
                     solver.lake_score.append(solver.find_lakes(i, j, count))
                     count += 1
+
+    def get_state(self):
+        return self.state
+
+    def get_lake_score(self):
+        return self.lake_score
 
 
 

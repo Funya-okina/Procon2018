@@ -2,6 +2,7 @@ import sys
 import numpy as np
 from control.Board import Board
 from threading import Thread
+from solver import Solver
 import json
 import socket
 import time
@@ -21,6 +22,8 @@ class Client(object):
 
         self.board = Board()
         self.playng_thread = None
+
+        self.solver = Solver()
 
         # connections
         self.team = "A" # "A" or "B"
@@ -71,6 +74,7 @@ class Client(object):
                     self.board.setFirstAgentCell(rcv_dict['agents'][0])
                     self.board.initBoardScores(rcv_dict['scores'])
                     self.board.printBoardScore()
+                    self.solver.set_board(self.board)
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
@@ -88,6 +92,11 @@ class Client(object):
         time.sleep(1e-3)
         if msg == "{quit}":
             self.client_socket.close()
+
+    def solve(self):
+        self.solver.set_state()
+        self.solver.get_state()
+        self.solver.get_lake_score()
 
 def call():
     client = Client()
