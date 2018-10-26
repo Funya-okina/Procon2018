@@ -7,7 +7,6 @@ class Solver(object):
         self.board = Board()
         self.state = [[0] * self.board.getBoardSize()[0] for i in range(self.board.getBoardSize()[1])]
         self.lake_score = list()
-        self.lake_score_buffer = 0
 
     def calcScoreAverage(self):
         return sum(map(sum, self.board.board_scores)) / ((self.board.row+1)*(self.board.column+1))
@@ -22,13 +21,15 @@ class Solver(object):
 
     def find_lakes(self, x, y, num):
         self.state[x][y] = num
-        self.lake_score_buffer += abs(self.board.getBoardScores()[x][y])
+        self.lake_score_buffer = 0
 
         self.utl = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
         for diff in self.utl:
             if (0 <= x + diff[0] < self.board.getBoardSize()[0] and 0 <= y + diff[1] < self.board.getBoardSize()[1]) and self.state[x+diff[0]][y+diff[1]] == 1:
-                self.find_lakes(x+diff[0], y+diff[1], num)
+                self.lake_score_buffer += self.find_lakes(x+diff[0], y+diff[1], num)
+        return abs(self.board.getBoardScores()[x][y]) + self.lake_score_buffer
+        
 
 def call():
     solver = Solver()
@@ -40,17 +41,31 @@ def call():
             print(cell, end="")
         print("")
 
+    for i in (0, solver.board.getBoardSize()[0]-1):
+        for j in range(solver.board.getBoardSize()[1]):
+            if solver.state[i][j] == 1:
+                solver.find_lakes(i, j, 0)
+
+    for i in range(solver.board.getBoardSize()[0]):
+        for j in (0, solver.board.getBoardSize()[1]-1):
+            if solver.state[i][j] == 1:
+                solver.find_lakes(i, j, 0)
+    
+
     count = 2
     for i in range(solver.board.getBoardSize()[0]):
         for j in range(solver.board.getBoardSize()[1]):
             if solver.state[i][j] == 1:
-                solver.find_lakes(i, j, count)
+                solver.lake_score.append(solver.find_lakes(i, j, count))
                 count += 1
 
     for row in solver.state:
         for cell in row:
             print(cell, end="")
         print("")
+
+    for item in solver.lake_score:
+        print(item)
     
 
 if __name__ == "__main__":
