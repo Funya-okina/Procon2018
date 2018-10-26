@@ -33,7 +33,7 @@ class Client(object):
         self.playng_thread = None
 
         # connections
-        self.player = "A"# "A" or "B"
+        self.team = "A" # "A" or "B"
         self.client_socket = None
         self.bsize = 1024
         self.receive_thread = None
@@ -42,20 +42,23 @@ class Client(object):
         self.rcv_msg = ''
 
     def wasClicked(self, board_row, board_column):
-        print(board_row, board_column)
-        print(self.webUi.getCellScore(board_row, board_column))
-        self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
+        if self.team == "A":
+            print(board_row, board_column)
+            print(self.webUi.getCellScore(board_row, board_column))
 
-    def genScores(self, row, column, symmetry, agents_a):
-        print("生成受け渡しデータ:", row, column)
-        self.board.initBoardSize(row, column)
-        print(agents_a)
-        self.board.genScores(symmetry)
-        self.board.setFirstAgentCell(agents_a)
-        self.board.printBoardScore()
-        self.setUIBoard()
+            self.webUi.editCellAttrs(board_row, board_column, "a-tile", True)
+        elif self.team == "B":
+            print(board_row, board_column)
+            print(self.webUi.getCellScore(board_row, board_column))
+            self.webUi.editCellAttrs(board_row, board_column, "b-tile", True)
 
-    def moveAgent(self, agent_name, movement):
+    def moveAgent(self, agent_name):
+        pass
+
+    def setTile(self, agent_name):
+        pass
+
+    def remomveTile(self):
         pass
 
     def showWeb(self):
@@ -69,14 +72,14 @@ class Client(object):
 
     # connections method
     def connectServer(self, port, team):
-        self.player = team
+        self.team = team
         addr = (self.host, port)
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect(addr)
 
         self.receive_thread = Thread(target=self.recieve)
         self.receive_thread.start()
-        self.send(self.player)
+        self.send(self.team)
 
     def recieve(self):
         while True:
@@ -87,9 +90,7 @@ class Client(object):
                     self.board.initBoardSize(*rcv_dict['size'])
                     self.board.setFirstAgentCell(rcv_dict['agents'][0])
                     self.board.initBoardScores(rcv_dict['scores'])
-                    self.board.printBoardScore()
                     self.setUIBoard()
-
             except OSError:
                 break
 

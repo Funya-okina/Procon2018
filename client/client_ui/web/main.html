@@ -32,7 +32,6 @@
                    v-model="team" value="B"
             >
             ]
-            {{ team }}
           </label>
         </div>
       <button id="connect" v-on:click="connectServer()">接続</button>
@@ -87,6 +86,7 @@
       </td>
     </tr>
   </table>
+  <button id="send-action" v-on:click="sendAction()">send action</button>
 </div>
 
 </body>

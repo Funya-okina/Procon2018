@@ -25,7 +25,6 @@ class Server(object):
 
         self.webUi = WebUi()
 
-        self.webUi.addEvent("cellClicked", self.wasClicked)
         self.webUi.addEvent("gameStart", self.gameStart)
         self.webUi.addEvent("genScores", self.genScores)
         self.webUi.addEvent("getMyIPAddress", self.getMyIPAddress)
@@ -67,19 +66,16 @@ class Server(object):
                 if self.isRecieved():
                     print(self.read())
 
-    def wasClicked(self, board_row, board_column):
-        print(board_row, board_column)
-        print(self.webUi.getCellScore(board_row, board_column))
-        self.webUi.editCellAttrs(board_row, board_column, "a0-present", True)
-
     def genScores(self, row, column, symmetry, agents_a):
         print("生成受け渡しデータ:", row, column)
         self.board.initBoardSize(row, column)
         print(agents_a)
         self.board.genScores(symmetry)
         self.board.setFirstAgentCell(agents_a)
-        self.board.printBoardScore()
         self.setUIBoard()
+        self.board.printBoardScore()
+        self.board.printTiles_A()
+        self.board.printTiles_B()
 
     def decodeQR(self, camera_id):
         qr = decodeQR(camera_id)

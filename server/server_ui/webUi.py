@@ -7,11 +7,6 @@ class WebUi:
         self.events = {}
 
         @eel.expose
-        def cellClicked(row, column):
-            if "cellClicked" in self.events:
-                self.events["cellClicked"](row, column)
-
-        @eel.expose
         def gameStart():
             if "gameStart" in self.events:
                 self.events["gameStart"]()
