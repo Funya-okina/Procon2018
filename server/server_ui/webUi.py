@@ -60,3 +60,7 @@ class WebUi:
     @staticmethod
     def getCellScore(row, column):
         return eel.getCellScore(row, column)()
+
+    @staticmethod
+    def updateCellAttrs(tile_a: list, tile_b: list, agents: list):
+        eel.updateCellAttrs(tile_a, tile_b, agents)

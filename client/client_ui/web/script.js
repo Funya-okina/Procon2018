@@ -111,6 +111,41 @@ function editCellAttrs(row, column, attr, value) {
     }
 }
 
+function updateCellAttrs(tileA, tileB, agents) {
+    console.log(agents);
+    for (let i = 0; i < tileA.length; i++) {
+        for (let j = 0; j < tileA[i].length; j++) {
+            editCellAttrs(i, j, 'a-tile', tileA[i][j] === 1);
+        }
+    }
+    for (let i = 0; i < tileB.length; i++) {
+        for (let j = 0; j < tileB[i].length; j++) {
+            editCellAttrs(i, j, 'b-tile', tileB[i][j] === 1);
+        }
+    }
+
+    for (let i = 0; i < app.cellScores.length; i++) {
+        for (let j = 0; j < app.cellScores[i].length; j++) {
+            app.cellScores[i][j].isA0Present = false;
+            app.cellScores[i][j].isA1Present = false;
+            app.cellScores[i][j].isB0Present = false;
+            app.cellScores[i][j].isB1Present = false;
+        }
+    }
+    for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < 2; j++) {
+            console.log(agents[i][j][0], agents[i][j][1]);
+
+            editCellAttrs(
+                agents[i][j][0],
+                agents[i][j][1],
+                `${(i === 0 ? 'a' : 'b') + j}-present`,
+                true
+            );
+        }
+    }
+}
+
 function getCellScore(row, column) {
     return app.cellScores[row][column].number
 }
@@ -123,3 +158,4 @@ eel.expose(showBoard);
 eel.expose(editCellAttrs);
 eel.expose(getCellScore);
 eel.expose(closeWindow);
+eel.expose(updateCellAttrs);
