@@ -103,9 +103,6 @@
       <td
         class="guide-cell"
         v-for="i in cellScores[0].length"
-        v-bind:class="{ 'focused-cell': isMouseoverRelatedCell(null, i - 1) || isMouseoverCell(null, i - 1) }"
-        v-on:mouseover="cellMouseover(null, i - 1)"
-        v-on:mouseout="cellMouseout(null, i -1)"
       >
         {{ i - 1 }}
       </td>
@@ -113,9 +110,6 @@
     <tr v-for="(row, i) in cellScores">
       <td
         class="guide-cell"
-        v-bind:class="{ 'focused-cell': isMouseoverRelatedCell(i, null) || isMouseoverCell(i, null) }"
-        v-on:mouseover="cellMouseover(i, null)"
-        v-on:mouseout="cellMouseout(i, null)"
       >
         {{ i }}
       </td>
@@ -124,8 +118,6 @@
         v-for="(column, j) in row"
         v-bind:title="`${i}, ${j}`"
         v-bind:class="{
-          'focused-cell': isMouseoverCell(i, j),
-          'focus-related-cell': isMouseoverRelatedCell(i, j),
           'a0-present-cell': cellScores[i][j].isA0Present,
           'a1-present-cell': cellScores[i][j].isA1Present,
           'b0-present-cell': cellScores[i][j].isB0Present,
@@ -136,9 +128,6 @@
           'a-tile-cell': cellScores[i][j].isATile,
           'b-tile-cell': cellScores[i][j].isBTile
         }"
-        v-on:mouseover="cellMouseover(i, j)"
-        v-on:mouseout="cellMouseout(i, j)"
-        v-on:click="cellClicked(i, j)"
       >
         {{ column.number }}
       </td>
