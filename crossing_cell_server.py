@@ -36,6 +36,7 @@ class Server(object):
         self.turnBehavior = [False, False]
 
         self.client_update_dict = {}
+        self.remove_tiles = []
 
         # connections
         self.clients = {}
@@ -134,7 +135,7 @@ class Server(object):
             agent_color = "b0-present"
 
         for x in client_update['remove_tiles']:
-            self.board.remove(x)
+            self.remove_tiles.append(x)
 
         agent = self.board.getCurrentAgentLocations()[t]
         for i in range(2):
@@ -159,6 +160,8 @@ class Server(object):
     def nextTurn(self):
         self.board.setCurrentAgentLocations(self.client_update_dict["A"]["agent_location"], "A")
         self.board.setCurrentAgentLocations(self.client_update_dict["B"]["agent_location"], "B")
+        for x in self.remove_tiles:
+            self.board.remove(x)
         json_data = json.dumps({
                     "order": "next_turn",
                     "agents": self.board.getCurrentAgentLocations(),
@@ -169,6 +172,7 @@ class Server(object):
         self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
     def rejectTurn(self):
+        self.remove_tiles = []
         json_data = json.dumps({
                 "order": "reject_turn",
                 "agents": self.board.getCurrentAgentLocations(),

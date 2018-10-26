@@ -43,15 +43,21 @@ class Client(object):
     def isAroundCell(self, cell1, cell2):
         return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
 
-    def wasClicked(self, board_row, board_column, mode="move"):
+    def wasClicked(self, board_row, board_column):
         if self.team == "A":
             i = 0
             tile_color = "a-tile"
             agent_color = "a{}-present".format(self.agent_behavior_step)
+            my_tiles = copy.copy(self.board.team_a)
+            opponent_tiles = copy.copy(self.board.team_b)
         elif self.team == "B":
             i = 1
             tile_color = "b-tile"
             agent_color = "b{}-present".format(self.agent_behavior_step)
+            my_tiles = copy.copy(self.board.team_b)
+            opponent_tiles = copy.copy(self.board.team_a)
+        print(my_tiles)
+        print(opponent_tiles)
 
         agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
         if self.isAroundCell([board_row, board_column], agent):
@@ -59,8 +65,13 @@ class Client(object):
             self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
 
             if self.agent_behavior_step >= 1:
-                self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                if opponent_tiles[board_row][board_column] == 1:
+                    self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
+                    self.remove_tile_locations.append([board_row, board_column])
+                else:
+                    self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step = 0
+
                 print(self.new_agent_locations)
                 json_data = json.dumps({
                     "order": "client_update",
@@ -72,7 +83,11 @@ class Client(object):
                 self.new_agent_locations = [[0, 0], [0, 0]]
                 self.remove_tile_locations = []
             else:
-                self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                if opponent_tiles[board_row][board_column] == 1:
+                    self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
+                    self.remove_tile_locations.append([board_row, board_column])
+                else:
+                    self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step += 1
         else:
             print("そこには移動できません.")

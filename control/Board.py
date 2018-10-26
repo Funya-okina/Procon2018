@@ -79,8 +79,8 @@ class Board:
         return self.board_scores
 
     def remove(self, cell):
-        self.team_a[cell[0], cell[1]] = 0
-        self.team_b[cell[0], cell[1]] = 0
+        self.team_a[cell[0]][cell[1]] = 0
+        self.team_b[cell[0]][cell[1]] = 0
 
     def printBoardScore(self, size=False):
         if size:
