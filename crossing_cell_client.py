@@ -110,7 +110,8 @@ class Client(object):
                         self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step += 1
         else:
-            print("選択したセルには移動できません.")
+            print("八近傍以外のセルには移動できません")
+
 
     def moveAgent(self):
         if self.team == "A":
