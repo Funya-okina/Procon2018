@@ -50,7 +50,6 @@ class Server(object):
                         "size": self.board.getBoardSize(),
                         "agents": self.board.getFirstAgentLocations(),
                     })
-            self.state = State.Playing
             self.broadcast(bytes(json_data, 'utf8'))
 
     def genScores(self, row, column, symmetry, agents_a):
