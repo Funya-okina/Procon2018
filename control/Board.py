@@ -77,6 +77,10 @@ class Board:
 
         return self.board_scores
 
+    def remove(self, cell):
+        self.team_a[cell[0], cell[1]] = 0
+        self.team_b[cell[0], cell[1]] = 0
+
     def printBoardScore(self, size=False):
         if size:
             print("row:{}, column:{}".format(self.row, self.column))
@@ -114,3 +118,13 @@ class Board:
 
     def getCurrentAgentLocations(self):
         return [self.current_agent_cells_a, self.current_agent_cells_b]
+
+    def setCurrentAgentLocations(self, agents, team):
+        if team == "A":
+            self.current_agent_cells_a = copy.copy(agents)
+            self.team_a[agents[0][0]][agents[0][1]] = 1
+            self.team_a[agents[1][0]][agents[1][1]] = 1
+        elif team == "B":
+            self.current_agent_cells_b = copy.copy(agents)
+            self.team_b[agents[0][0]][agents[0][1]] = 1
+            self.team_b[agents[1][0]][agents[1][1]] = 1
