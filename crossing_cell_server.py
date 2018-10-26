@@ -7,16 +7,11 @@ from server.server_ui.webUi import WebUi
 from server.QRLib import decodeQR
 from server.QRLib import encodeQR
 from control.Board import Board
-from enum import Enum, auto
 import json
 import socket
 from threading import Thread
 
 np.set_printoptions(threshold=np.inf)
-
-class State(Enum):
-    BeforeStart = auto()
-    Playing = auto()
 
 
 class Server(object):
@@ -34,8 +29,6 @@ class Server(object):
         self.webUi.addEvent("standbyServer", self.standbyServer)
 
         self.board = Board()
-
-        self.state = State.BeforeStart
 
         self.turnBehavior = [False, False]
 
@@ -59,14 +52,6 @@ class Server(object):
                     })
             self.state = State.Playing
             self.broadcast(bytes(json_data, 'utf8'))
-
-    def playing(self):
-        while True:
-            if self.state == State.BeforeStart:
-                pass
-            elif self.state == State.Playing:
-                if self.isRecieved():
-                    print(self.read())
 
     def genScores(self, row, column, symmetry, agents_a):
         print("生成受け渡しデータ:", row, column)

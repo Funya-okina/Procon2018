@@ -3,7 +3,6 @@ import numpy as np
 from client.client_ui.webUi import WebUi
 from control.Board import Board
 from threading import Thread
-from enum import Enum, auto
 import json
 import socket
 import time
@@ -12,10 +11,6 @@ import copy
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
-
-class State(Enum):
-    BeforeStart = auto()
-    Playing = auto()
 
 
 class Client(object):
@@ -35,7 +30,6 @@ class Client(object):
         self.remove_tile_locations = []
 
         self.board = Board()
-        self.state = State.BeforeStart
         self.playng_thread = None
 
         # connections
