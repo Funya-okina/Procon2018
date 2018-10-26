@@ -39,6 +39,11 @@
   </label>
 
   <Hr>
+
+  <label for="remove-mode">
+      isRemoveMode:
+      <input type="checkbox" id="remove-mode" v-model="isRemoveMode">
+  </label>
   <table class="board" v-if="isDisplaying" v-cloak>
     <tr>
       <td class="guide-cell"></td>
@@ -86,7 +91,6 @@
       </td>
     </tr>
   </table>
-  <button id="send-action" v-on:click="sendAction()">send action</button>
 </div>
 
 </body>

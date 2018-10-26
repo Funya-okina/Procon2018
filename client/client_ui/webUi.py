@@ -12,9 +12,9 @@ class WebUi:
                 self.events["connectServer"](port, team)
 
         @eel.expose
-        def cellClicked(row, column):
+        def cellClicked(row, column, isRemoveMode):
             if "cellClicked" in self.events:
-                self.events["cellClicked"](row, column)
+                self.events["cellClicked"](row, column, isRemoveMode)
 
         @eel.expose
         def getBoardScores():

@@ -43,7 +43,7 @@ class Client(object):
     def isAroundCell(self, cell1, cell2):
         return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
 
-    def wasClicked(self, board_row, board_column):
+    def wasClicked(self, board_row, board_column, is_remove_mode):
         if self.team == "A":
             i = 0
             tile_color = "a-tile"
@@ -56,20 +56,29 @@ class Client(object):
             agent_color = "b{}-present".format(self.agent_behavior_step)
             my_tiles = copy.copy(self.board.team_b)
             opponent_tiles = copy.copy(self.board.team_a)
-        print(my_tiles)
-        print(opponent_tiles)
 
         agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
         if self.isAroundCell([board_row, board_column], agent):
-            self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
-            self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
 
             if self.agent_behavior_step >= 1:
-                if opponent_tiles[board_row][board_column] == 1:
-                    self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
-                    self.remove_tile_locations.append([board_row, board_column])
+                if is_remove_mode:
+                    if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
+                        self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
+                        self.remove_tile_locations.append([board_row, board_column])
+                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        # self.delCellAttrs(board_row, board_column)
+                    else:
+                        print("選択したセルは除去できません")
+                        return
                 else:
-                    self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                    if opponent_tiles[board_row][board_column] == 1:
+                        print("選択したセルに移動するためには除去を行う必要があります")
+                        return
+                    else:
+                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+
                 self.agent_behavior_step = 0
 
                 print(self.new_agent_locations)
@@ -83,15 +92,25 @@ class Client(object):
                 self.new_agent_locations = [[0, 0], [0, 0]]
                 self.remove_tile_locations = []
             else:
-                if opponent_tiles[board_row][board_column] == 1:
-                    self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
-                    self.remove_tile_locations.append([board_row, board_column])
+                if is_remove_mode:
+                    if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
+                        self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
+                        self.remove_tile_locations.append([board_row, board_column])
+                        # self.delCellAttrs(board_row, board_column)
+                    else:
+                        print("選択したセルは除去できません")
+                        return
                 else:
-                    self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                    if opponent_tiles[board_row][board_column] == 1:
+                        print("選択したセルに移動するためには除去を行う必要があります")
+                        return
+                    else:
+                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step += 1
         else:
-            print("そこには移動できません.")
-
+            print("選択したセルには移動できません.")
 
     def moveAgent(self):
         if self.team == "A":

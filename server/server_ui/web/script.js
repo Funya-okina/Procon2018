@@ -124,18 +124,6 @@ function showBoard(cellScores, firstAgentsA, firstAgentsB) {
 function editCellAttrs(row, column, attr, value) {
     const editCell = app.cellScores[row][column];
     switch (attr) {
-        case 'a0-present':
-            editCell.isA0Present = value;
-            break;
-        case 'a1-present':
-            editCell.isA1Present = value;
-            break;
-        case 'b0-present':
-            editCell.isB0Present = value;
-            break;
-        case 'b1-present':
-            editCell.isB1Present = value;
-            break;
         case 'a-area':
             editCell.isAArea = value;
             break;
@@ -147,6 +135,18 @@ function editCellAttrs(row, column, attr, value) {
             break;
         case 'b-tile':
             editCell.isBTile = value;
+            break;
+        case 'a0-present':
+            editCell.isA0Present = value;
+            break;
+        case 'a1-present':
+            editCell.isA1Present = value;
+            break;
+        case 'b0-present':
+            editCell.isB0Present = value;
+            break;
+        case 'b1-present':
+            editCell.isB1Present = value;
             break;
     }
 }
