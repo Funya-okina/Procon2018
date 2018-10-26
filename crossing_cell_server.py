@@ -10,6 +10,7 @@ from control.Board import Board
 import json
 import socket
 from threading import Thread
+import copy
 
 np.set_printoptions(threshold=np.inf)
 
@@ -27,10 +28,14 @@ class Server(object):
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
         self.webUi.addEvent("encodeQR", self.encodeQR)
         self.webUi.addEvent("standbyServer", self.standbyServer)
+        self.webUi.addEvent("nextTurn", self.nextTurn)
+        self.webUi.addEvent("rejectTurn", self.rejectTurn)
 
         self.board = Board()
 
         self.turnBehavior = [False, False]
+
+        self.client_update_dict = {}
 
         # connections
         self.clients = {}
@@ -119,19 +124,41 @@ class Server(object):
         return self.board.getBoardScores()
 
     def turnUpdate(self, client_update):
-        self.board.setCurrentAgentLocations(client_update['agent_location'], client_update['from'])
+        if client_update['from'] == "A":
+            t = 0
+            tile_color = "a-tile"
+            agent_color = "a0-present"
+        elif client_update['from'] == "B":
+            t = 1
+            tile_color = "b-tile"
+            agent_color = "b0-present"
+
         for x in client_update['remove_tiles']:
             self.board.remove(x)
 
+        agent = self.board.getCurrentAgentLocations()[t]
+        for i in range(2):
+            self.webUi.editCellAttrs(agent[i][0], agent[i][1], tile_color, True)
+            self.webUi.editCellAttrs(
+                    client_update['agent_location'][i][0],
+                    client_update['agent_location'][i][1],
+                    agent_color,
+                    True
+                    )
+
         if client_update['from'] == "A":
             self.turnBehavior[0] = True
+            self.client_update_dict["A"] = client_update
         elif client_update['from'] == "B":
             self.turnBehavior[1] = True
+            self.client_update_dict["B"] = client_update
         if all(self.turnBehavior):
             self.turnBehavior = [False, False]
-            self.nextTurn()
+            self.webUi.setTurnConfirmView(True)
 
     def nextTurn(self):
+        self.board.setCurrentAgentLocations(self.client_update_dict["A"]["agent_location"], "A")
+        self.board.setCurrentAgentLocations(self.client_update_dict["B"]["agent_location"], "B")
         json_data = json.dumps({
                     "order": "next_turn",
                     "agents": self.board.getCurrentAgentLocations(),
@@ -139,6 +166,17 @@ class Server(object):
                     "tiles_b": self.board.team_b
                 })
         self.broadcast(bytes(json_data, 'utf8'))
+        self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+
+    def rejectTurn(self):
+        json_data = json.dumps({
+                "order": "reject_turn",
+                "agents": self.board.getCurrentAgentLocations(),
+                "tiles_a": self.board.team_a,
+                "tiles_b": self.board.team_b
+            })
+        self.broadcast(bytes(json_data, 'utf8'))
+        self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
 
     # connection method

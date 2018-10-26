@@ -65,3 +65,7 @@
  .size-input {
   width: 30px;
 }
+
+#next-confirm {
+  display: none;
+}

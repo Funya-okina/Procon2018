@@ -20,6 +20,7 @@ class Board:
         self.column = int(column)
         self.team_a = [[0] * column for i in range(row)]
         self.team_b = [[0] * column for i in range(row)]
+
     def initBoardScores(self, scores):
         self.board_scores = scores
 

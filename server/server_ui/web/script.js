@@ -82,6 +82,16 @@ const app = new Vue({
             this.cellScores = preparedCellScores;
             this.isDisplaying = true;
         },
+
+        nextTurn: function () {
+            document.getElementById("next-confirm").style.display="none";
+            eel.nextTurn()
+        },
+
+        rejectTurn: function () {
+            document.getElementById("next-confirm").style.display="none";
+            eel.rejectTurn()
+        },
     }
 });
 
@@ -184,8 +194,17 @@ function closeWindow() {
     window.close();
 }
 
+function setTurnConfirmView(state) {
+    if(state == true){
+        document.getElementById("next-confirm").style.display="block";
+    }else{
+        document.getElementById("next-confirm").style.display="none";
+    }
+}
+
 eel.expose(showBoard);
 eel.expose(editCellAttrs);
 eel.expose(getCellScore);
 eel.expose(closeWindow);
 eel.expose(updateCellAttrs);
+eel.expose(setTurnConfirmView);

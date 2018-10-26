@@ -36,6 +36,16 @@ class WebUi:
             if "standbyServer" in self.events:
                 self.events["standbyServer"](port)
 
+        @eel.expose
+        def nextTurn():
+            if "nextTurn" in self.events:
+                self.events["nextTurn"]()
+
+        @eel.expose
+        def rejectTurn():
+            if "rejectTurn" in self.events:
+                self.events["rejectTurn"]()
+
     def addEvent(self, event_name: str, func: object):
         self.events[event_name] = func
 
@@ -64,3 +74,7 @@ class WebUi:
     @staticmethod
     def updateCellAttrs(tile_a: list, tile_b: list, agents: list):
         eel.updateCellAttrs(tile_a, tile_b, agents)
+
+    @staticmethod
+    def setTurnConfirmView(state: bool):
+        eel.setTurnConfirmView(state)

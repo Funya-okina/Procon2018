@@ -14,7 +14,6 @@ argv = sys.argv
 
 
 class Client(object):
-
     def __init__(self, port):
         self.host = 'localhost'
 
@@ -130,7 +129,19 @@ class Client(object):
                     if self.team == "A":
                         self.board.printTiles_A()
                         self.board.printTiles_B()
-                    # self.updateUIBoard()
+                        print(self.board.getCurrentAgentLocations())
+                    self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+                elif order == 'reject_turn':
+                    self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
+                    self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
+                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    if self.team == "A":
+                        self.board.printTiles_A()
+                        self.board.printTiles_B()
+                        print(self.board.getCurrentAgentLocations())
+                    self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+
 
             except OSError:
                 break
