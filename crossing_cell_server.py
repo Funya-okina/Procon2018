@@ -60,8 +60,12 @@ class Server(object):
         self.board.setFirstAgentCell(agents_a)
         self.setUIBoard()
         self.board.printBoardScore()
+        self.board.printBoardScore_sq(self.calcScoreAverage())
         self.board.printTiles_A()
         self.board.printTiles_B()
+
+    def calcScoreAverage(self):
+        return sum(map(sum, self.board.board_scores)) / ((self.board.row+1)*(self.board.column+1))
 
     def decodeQR(self, camera_id):
         qr = decodeQR(camera_id)
@@ -83,6 +87,7 @@ class Server(object):
             board_cell_scores.append(row_scores_list)
         self.board.initBoardScores(board_cell_scores)
         self.board.printBoardScore()
+        self.board.printBoardScore_sq(self.calcScoreAverage())
         self.setUIBoard()
 
     def encodeQR(self):
