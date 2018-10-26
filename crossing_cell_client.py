@@ -7,6 +7,7 @@ from enum import Enum, auto
 import json
 import socket
 import time
+import math
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
@@ -28,6 +29,8 @@ class Client(object):
         self.webUi.addEvent("getBoardScores", self.getBoardScores)
         self.webUi.addEvent("connectServer", self.connectServer)
 
+        self.agent_behavior_step = 0
+
         self.board = Board()
         self.state = State.BeforeStart
         self.playng_thread = None
@@ -41,31 +44,54 @@ class Client(object):
         self.was_recieved = False
         self.rcv_msg = ''
 
+    def isAroundCell(self, cell1, cell2):
+        return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
+
     def wasClicked(self, board_row, board_column):
         if self.team == "A":
-            print(board_row, board_column)
-            print(self.webUi.getCellScore(board_row, board_column))
-
-            self.webUi.editCellAttrs(board_row, board_column, "a-tile", True)
+            i = 0
+            tile_color = "a-tile"
+            agent_color = "a{}-present".format(self.agent_behavior_step)
         elif self.team == "B":
-            print(board_row, board_column)
-            print(self.webUi.getCellScore(board_row, board_column))
-            self.webUi.editCellAttrs(board_row, board_column, "b-tile", True)
+            i = 1
+            tile_color = "b-tile"
+            agent_color = "b{}-present".format(self.agent_behavior_step)
 
-    def moveAgent(self, agent_name):
-        pass
+        agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
+        if self.isAroundCell([board_row, board_column], agent):
+            self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+            self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+            if self.agent_behavior_step >= 1:
+                self.agent_behavior_step = 0
+            else:
+                self.agent_behavior_step += 1
+        else:
+            print("そこには移動できません.")
 
-    def setTile(self, agent_name):
-        pass
+
+    def moveAgent(self):
+        if self.team == "A":
+            pass
+        elif self.team == "B":
+            pass
+
+    def setTile(self):
+        if self.team == "A":
+            pass
+        elif self.team == "B":
+            pass
 
     def remomveTile(self):
-        pass
+        if self.team == "A":
+            pass
+        elif self.team == "B":
+            pass
 
     def showWeb(self):
         self.webUi.showWindow(self.port_ui)
 
     def setUIBoard(self):
-        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cell_a, self.board.first_agent_cell_b)
+        self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cells_a, self.board.first_agent_cells_b)
 
     def getBoardScores(self):
         return self.board.getBoardScores()
