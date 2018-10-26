@@ -7,6 +7,10 @@ const app = new Vue({
         cellScores: [],
         port: 25565,
         team: "A",
+        mouseoverCell: {
+            row: null,
+            column: null
+        },
     },
     methods: {
         connectServer: function(){

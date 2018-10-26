@@ -90,7 +90,6 @@ class Client(object):
                     self.board.printBoardScore()
                     self.setUIBoard()
 
-
             except OSError:
                 break
 
