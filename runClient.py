@@ -1,11 +1,19 @@
 import sys
 import numpy as np
 from client.client_ui.webUi import WebUi
-from client.clientAPI import ClientAPI
 from control.Board import Board
+from threading import Thread
+from enum import Enum, auto
+import json
+import socket
+import time
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
+
+class State(Enum):
+    BeforeStart = auto()
+    Playing = auto()
 
 
 class Client(object):
@@ -21,7 +29,17 @@ class Client(object):
         self.webUi.addEvent("connectServer", self.connectServer)
 
         self.board = Board()
-        self.client = None
+        self.state = State.BeforeStart
+        self.playng_thread = None
+
+        # connections
+        self.player = "A"# "A" or "B"
+        self.client_socket = None
+        self.bsize = 1024
+        self.receive_thread = None
+        self.input_thread = None
+        self.was_recieved = False
+        self.rcv_msg = ''
 
     def wasClicked(self, board_row, board_column):
         print(board_row, board_column)
@@ -49,11 +67,38 @@ class Client(object):
     def getBoardScores(self):
         return self.board.getBoardScores()
 
+    # connections method
     def connectServer(self, port, team):
-        self.client = ClientAPI(team)
-        self.client.connect(self.host, port)
-        self.client.send("My name is {}".format(team))
+        self.player = team
+        addr = (self.host, port)
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect(addr)
 
+        self.receive_thread = Thread(target=self.recieve)
+        self.receive_thread.start()
+        self.send(self.player)
+
+    def recieve(self):
+        while True:
+            try:
+                msg = self.client_socket.recv(self.bsize).decode("utf8")
+                rcv_dict = json.loads(msg)
+                if rcv_dict['order'] == 'board_scores':
+                    self.board.initBoardSize(*rcv_dict['size'])
+                    self.board.setFirstAgentCell(rcv_dict['agents'][0])
+                    self.board.initBoardScores(rcv_dict['scores'])
+                    self.board.printBoardScore()
+                    self.setUIBoard()
+
+
+            except OSError:
+                break
+
+    def send(self, msg):  # event is passed by binders.
+        self.client_socket.send(bytes(msg, "utf8"))
+        time.sleep(1e-3)
+        if msg == "{quit}":
+            self.client_socket.close()
 
 
 if __name__ == "__main__":
