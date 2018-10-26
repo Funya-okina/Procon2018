@@ -89,6 +89,16 @@ class Board:
                 print("{: 3}".format(score), end="")
             print("")
 
+    def printBoardScore_sq(self, level):
+        for row_socres in self.board_scores:
+            for score in row_socres:
+                if score > level:
+                    print("██", end="")
+                else:
+                    print("  ", end="")
+            print("")
+
+
     def printTiles_A(self, size=False):
         if size:
             print("row:{}, column:{}".format(self.row, self.column))
