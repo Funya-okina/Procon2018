@@ -20,6 +20,7 @@ class Board:
         self.column = int(column)
         self.team_a = [[0] * column for i in range(row)]
         self.team_b = [[0] * column for i in range(row)]
+
     def initBoardScores(self, scores):
         self.board_scores = scores
 
@@ -78,8 +79,8 @@ class Board:
         return self.board_scores
 
     def remove(self, cell):
-        self.team_a[cell[0], cell[1]] = 0
-        self.team_b[cell[0], cell[1]] = 0
+        self.team_a[cell[0]][cell[1]] = 0
+        self.team_b[cell[0]][cell[1]] = 0
 
     def printBoardScore(self, size=False):
         if size:

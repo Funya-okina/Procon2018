@@ -96,6 +96,10 @@
       </label>
     </div>
     <button id="game-start" v-on:click="gameStart()">Game Start</button>
+    <div id="next-confirm">行動を反映して次のターンに進めますか？
+        <button id="next-confirm-yes" v-on:click="nextTurn()">Yes</button>
+        <button id="next-confirm-no" v-on:click="rejectTurn()">No</button>
+    </div>
   <Hr>
   <table class="board" v-if="isDisplaying" v-cloak>
     <tr>

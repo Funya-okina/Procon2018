@@ -14,7 +14,6 @@ argv = sys.argv
 
 
 class Client(object):
-
     def __init__(self, port):
         self.host = 'localhost'
 
@@ -44,24 +43,44 @@ class Client(object):
     def isAroundCell(self, cell1, cell2):
         return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
 
-    def wasClicked(self, board_row, board_column, mode="move"):
+    def wasClicked(self, board_row, board_column, is_remove_mode):
         if self.team == "A":
             i = 0
             tile_color = "a-tile"
             agent_color = "a{}-present".format(self.agent_behavior_step)
+            my_tiles = copy.copy(self.board.team_a)
+            opponent_tiles = copy.copy(self.board.team_b)
         elif self.team == "B":
             i = 1
             tile_color = "b-tile"
             agent_color = "b{}-present".format(self.agent_behavior_step)
+            my_tiles = copy.copy(self.board.team_b)
+            opponent_tiles = copy.copy(self.board.team_a)
 
         agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
         if self.isAroundCell([board_row, board_column], agent):
-            self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
-            self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
 
             if self.agent_behavior_step >= 1:
-                self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                if is_remove_mode:
+                    if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
+                        self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
+                        self.remove_tile_locations.append([board_row, board_column])
+                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        # self.delCellAttrs(board_row, board_column)
+                    else:
+                        print("選択したセルは除去できません")
+                        return
+                else:
+                    if opponent_tiles[board_row][board_column] == 1:
+                        print("選択したセルに移動するためには除去を行う必要があります")
+                        return
+                    else:
+                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+
                 self.agent_behavior_step = 0
+
                 print(self.new_agent_locations)
                 json_data = json.dumps({
                     "order": "client_update",
@@ -73,11 +92,25 @@ class Client(object):
                 self.new_agent_locations = [[0, 0], [0, 0]]
                 self.remove_tile_locations = []
             else:
-                self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                if is_remove_mode:
+                    if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
+                        self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
+                        self.remove_tile_locations.append([board_row, board_column])
+                        # self.delCellAttrs(board_row, board_column)
+                    else:
+                        print("選択したセルは除去できません")
+                        return
+                else:
+                    if opponent_tiles[board_row][board_column] == 1:
+                        print("選択したセルに移動するためには除去を行う必要があります")
+                        return
+                    else:
+                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
                 self.agent_behavior_step += 1
         else:
-            print("そこには移動できません.")
-
+            print("選択したセルには移動できません.")
 
     def moveAgent(self):
         if self.team == "A":
@@ -130,7 +163,19 @@ class Client(object):
                     if self.team == "A":
                         self.board.printTiles_A()
                         self.board.printTiles_B()
-                    # self.updateUIBoard()
+                        print(self.board.getCurrentAgentLocations())
+                    self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+                elif order == 'reject_turn':
+                    self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
+                    self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
+                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    if self.team == "A":
+                        self.board.printTiles_A()
+                        self.board.printTiles_B()
+                        print(self.board.getCurrentAgentLocations())
+                    self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+
 
             except OSError:
                 break
