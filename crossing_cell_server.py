@@ -170,6 +170,7 @@ class Server(object):
         self.board.setCurrentAgentLocations(self.client_update_dict["B"]["agent_location"], "B")
         for x in self.remove_tiles:
             self.board.remove(x)
+        self.remove_tiles = []
         json_data = json.dumps({
                     "order": "next_turn",
                     "agents": self.board.getCurrentAgentLocations(),

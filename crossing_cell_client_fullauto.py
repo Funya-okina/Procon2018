@@ -177,36 +177,48 @@ class Client(object):
                     self.setUIBoard()
 
                     # これよりソルバー
+                    if self.team == 'A':
+                        agent_pos = self.board.current_agent_cells_a
+                    elif self.team == 'B':
+                        agent_pos = self.board.current_agent_cells_b
+
                     self.solving_engine.update_board(self.board)
                     self.solving_engine.calcScoreAverage()
 
                     self.solving_engine.gen_state_list()
 
-                    agent0_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[0])
+                    agent0_next = self.solving_engine.search_around(*agent_pos[0])
                     self.wasClicked(*agent0_next)
-                    agent1_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[1])
+                    agent1_next = self.solving_engine.search_around(*agent_pos[1])
                     self.wasClicked(*agent1_next)
+                    time.sleep(1.0)
 
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
-                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
-                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    self.board.team_a = copy.deepcopy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.deepcopy(rcv_dict['tiles_b'])
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
                     # ソルバー
+                    if self.team == 'A':
+                        agent_pos = self.board.current_agent_cells_a
+                    elif self.team == 'B':
+                        agent_pos = self.board.current_agent_cells_b
+
                     self.solving_engine.update_board(self.board)
                     self.solving_engine.gen_state_list()
 
-                    agent0_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[0])
+                    agent0_next = self.solving_engine.search_around(*agent_pos[0])
                     self.wasClicked(*agent0_next)
-                    agent1_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[1])
+                    agent1_next = self.solving_engine.search_around(*agent_pos[1])
                     self.wasClicked(*agent1_next)
+                    time.sleep(1.0)
 
                 elif order == 'reject_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
-                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
-                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    self.board.team_a = copy.deepcopy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.deepcopy(rcv_dict['tiles_b'])
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
 
