@@ -97,7 +97,13 @@
     </div>
     <button id="game-start" v-on:click="gameStart()">Game Start</button>
   <Hr>
-  <table class="board" v-if="isDisplaying" v-cloak>
+  <button v-on:click="boardRotate += 90;">回転</button>
+  <table
+    class="board"
+    v-if="isDisplaying"
+    v-cloak
+    v-bind:style="{transform: `rotate(${boardRotate}deg)`}"
+  >
     <tr>
       <td class="guide-cell"></td>
       <td
