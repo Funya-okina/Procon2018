@@ -56,18 +56,18 @@ class NewSolver(object):
         que = []
         for a in destination:
             if (0 <= row + a[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] < self.board.getBoardSize()[1]) :
-                state_cache1 = copy.copy(self.state)
+                state_cache1 = copy.deepcopy(self.state)
                 first_step = self.state[row+a[0]][column+a[1]]
                 state_cache1[row+a[0]][column+a[1]] = 0
                 
                 for b in destination:
                     if (0 <= row + a[0] + b[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] + b[1] < self.board.getBoardSize()[1]):
-                        state_cache2 = copy.copy(state_cache1)
+                        state_cache2 = copy.deepcopy(state_cache1)
                         second_step = state_cache1[row+a[0]+b[0]][column+a[1]+b[1]]
                         state_cache2[row+a[0]+b[0]][column+a[1]+b[1]] = 0
 
                         for c in destination:
-                            if (0 <= row + a[0] + b[0] + c[0]< self.board.getBoardSize()[0]) and (0 <= column + a[1] + b[1] + c[1]< self.board.getBoardSize()[1]):
+                            if (0 <= row + a[0] + b[0] + c[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] + b[1] + c[1] < self.board.getBoardSize()[1]):
                                 third_step = state_cache2[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]]
                                 que.append((first_step + second_step + third_step,
                                             self.board.getBoardScores()[row+a[0]][column+a[1]] + self.board.getBoardScores()[row+a[0]+b[0]][column+a[1]+b[1]] + self.board.getBoardScores()[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]],
@@ -76,12 +76,14 @@ class NewSolver(object):
         practice = [0, 0] #[forのiを代入, 評価値を代入]
         practices = []
 
+        print(len(que))
+
         for i, element in enumerate(que):
             if element[0] > practice[1]:
                 practice = [i, element[0]]
                 practices = []
                 practices.append(practice)
-            elif practice[1] == element[0]:
+            elif element[0]== practice[1]:
                 practice = [i, element[0]]
                 practices.append(practice)
 
@@ -92,7 +94,7 @@ class NewSolver(object):
 
 def call():
     solver = NewSolver('A')
-    solver.board.initBoardSize(8, 11)
+    solver.board.initBoardSize(11, 11)
     solver.board.genScores(0)
     # solver.board.team_b = [[1]*11 for l in range(11)]
     solver.calcScoreAverage()
