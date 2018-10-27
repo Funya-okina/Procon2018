@@ -5,8 +5,8 @@ import numpy as np
 
 class Board:
     def __init__(self):
-        self.row = 11
-        self.column = 11
+        self.row = 12
+        self.column = 12
         self.first_agent_cells_a = [[0, 0], [0, 1]]
         self.first_agent_cells_b = [[1, 0], [1, 1]]
         self.board_scores = []
