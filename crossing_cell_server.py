@@ -10,7 +10,6 @@ from control.Board import Board
 import json
 import socket
 from threading import Thread
-import copy
 
 np.set_printoptions(threshold=np.inf)
 

@@ -74,8 +74,8 @@ class Client(object):
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
-                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
-                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    self.board.team_a = copy.deepcopy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.deepcopy(rcv_dict['tiles_b'])
                     if self.team == "A":
                         self.board.printTiles_A()
                         self.board.printTiles_B()
