@@ -60,7 +60,16 @@ class Solver(object):
     def print_state(self):
         for row in self.state:
             for cell in row:
-                print(format(cell, '3x'), end="")
+                print(format(cell, '3d'), end="")
+            print("")
+
+    def print_state_and_score(self):
+        for row in self.state:
+            for cell in row:
+                if cell < 0:
+                    print(format(0, '3d'), end="")
+                else:
+                    print(format(self.lake_score[cell], '3d'), end="")
             print("")
 
 
@@ -72,7 +81,7 @@ def call():
 
     for row in solver.state:
         for cell in row:
-            print(format(cell, '3x'), end="")
+            print(format(cell, '3d'), end="")
         print("")
 
     for i in (0, solver.board.getBoardSize()[0]-1):
@@ -96,7 +105,7 @@ def call():
 
     for row in solver.state:
         for cell in row:
-            print(format(cell, '3x'), end="")
+            print(format(cell, '3d'), end="")
         print("")
 
     for item in solver.lake_score:

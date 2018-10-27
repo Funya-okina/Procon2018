@@ -164,6 +164,7 @@ class Client(object):
                     self.solver.board.board_scores = copy.copy(self.board.board_scores)
                     self.solver.state_init()
                     self.solver.set_state()
+
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
@@ -172,7 +173,7 @@ class Client(object):
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
                     #print(self.solver.get_state())
-                    self.solver.print_state()
+                    self.solver.print_state_and_score()
 
                 elif order == 'reject_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
