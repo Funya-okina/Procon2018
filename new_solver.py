@@ -2,6 +2,7 @@ import sys
 import queue
 from control.Board import Board
 import copy
+import random
 
 class NewSolver(object):
     def __init__(self):
@@ -89,17 +90,23 @@ class NewSolver(object):
                 practice = [i, element[0]]
                 practices.append(practice)
 
-        best_practice = [0, (0, 0)]
+        best_practices = [(0, (0, 0))]
         for a in practices:
-            if que[a[0]][1] > best_practice[0]:
-                best_practice = [que[a[0]][1], que[a[0]][2][0]]
-        return [row + best_practice[1][0], column + best_practice[1][1]]
+            if que[a[0]][1] > best_practices[0][0]:
+                best_practices = []
+                best_practices.append([que[a[0]][1], que[a[0]][2][0]])
+            elif que[a[0]][1] == best_practices[0][0]:
+                best_practices.append([que[a[0]][1], que[a[0]][2][0]])
+        
+        num_run = random.randrange(len(best_practices))
+        return [row + best_practices[num_run][1][0], column + best_practices[num_run][1][1]]
 
 
 
 #これより下デバッグ用テスト実行コード
 def call():
-    solver = NewSolver('A')
+    solver = NewSolver()
+    solver.set_team('A')
     solver.board.initBoardSize(11, 11)
     solver.board.genScores(0)
     # solver.board.team_b = [[1]*11 for l in range(11)]
