@@ -4,11 +4,11 @@ from control.Board import Board
 import copy
 
 class NewSolver(object):
-    def __init__(self, team):
+    def __init__(self):
         self.board = Board()
         self.state = []
         self.threshold = 0
-        self.team = team
+        self.team = 'A'
 
     def calcScoreAverage(self):
         num_of_cells = 0
@@ -20,7 +20,10 @@ class NewSolver(object):
 
         self.threshold /= num_of_cells
 
-    def update_boad(self, input_board):
+    def set_team(self, team):
+        self.team = team
+
+    def update_board(self, input_board):
         self.board = input_board
 
     def gen_state_list(self):
