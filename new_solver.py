@@ -89,7 +89,7 @@ class NewSolver(object):
         best_practice = [0, (0, 0)]
         for a in practices:
             if que[a[0]][1] > best_practice[0]:
-                best_practice = [que[a[0]][1], que[a[0]][2][1]]
+                best_practice = [que[a[0]][1], que[a[0]][2][0]]
         return [row + best_practice[1][0], column + best_practice[1][1]]
 
 
@@ -115,7 +115,7 @@ def call():
         print("")
     print("")
 
-    print(solver.search_around(3, 3))
+    print(solver.search_around(0, 10))
 
 
 if __name__ == '__main__':
