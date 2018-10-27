@@ -27,6 +27,7 @@ class Client(object):
 
         self.agent_behavior_step = 0
         self.new_agent_locations = [[0, 0], [0, 0]]
+        self.new_agent_diff = [[0, 0], [0, 0]]
         self.remove_tile_locations = []
 
         self.board = Board()
@@ -51,12 +52,14 @@ class Client(object):
             i = 0
             tile_color = "a-tile"
             agent_color = "a{}-present".format(self.agent_behavior_step)
+            opponent_color = "b-tile"
             my_tiles = copy.copy(self.board.team_a)
             opponent_tiles = copy.copy(self.board.team_b)
         elif self.team == "B":
             i = 1
             tile_color = "b-tile"
             agent_color = "b{}-present".format(self.agent_behavior_step)
+            opponent_color = "a-tile"
             my_tiles = copy.copy(self.board.team_b)
             opponent_tiles = copy.copy(self.board.team_a)
 
@@ -68,8 +71,7 @@ class Client(object):
                     if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
                         self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
                         self.remove_tile_locations.append([board_row, board_column])
-                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
-                        # self.delCellAttrs(board_row, board_column)
+                        self.webUi.editCellAttrs(board_row, board_column, opponent_color, False)
                     else:
                         print("選択したセルは除去できません")
                         return
@@ -82,9 +84,12 @@ class Client(object):
                         self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
                         self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
 
-                self.agent_behavior_step = 0
+                diff = [self.new_agent_locations[1][0]-agent[0],
+                        self.new_agent_locations[1][1]-agent[1]]
 
-                print(self.new_agent_locations)
+                self.agent_behavior_step = 0
+                print("黒:", self.chooseTramp(diff))
+
                 json_data = json.dumps({
                     "order": "client_update",
                     "from": self.team,
@@ -99,7 +104,7 @@ class Client(object):
                     if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
                         self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
                         self.remove_tile_locations.append([board_row, board_column])
-                        # self.delCellAttrs(board_row, board_column)
+                        self.webUi.editCellAttrs(board_row, board_column, opponent_color, False)
                     else:
                         print("選択したセルは除去できません")
                         return
@@ -111,9 +116,31 @@ class Client(object):
                         self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
                         self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
                         self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+
                 self.agent_behavior_step += 1
+                diff = [self.new_agent_locations[0][0]-agent[0],
+                        self.new_agent_locations[0][1]-agent[1]]
+                print("赤:", self.chooseTramp(diff))
         else:
             print("八近傍以外のセルには移動できません")
+
+    def chooseTramp(self, diff):
+        if diff == [-1, 0]:
+            return 1
+        elif diff == [-1, 1]:
+            return 2
+        elif diff == [0, 1]:
+            return 3
+        elif diff == [1, 1]:
+            return 4
+        elif diff == [1, 0]:
+            return 5
+        elif diff == [1, -1]:
+            return 6
+        elif diff == [0, -1]:
+            return 7
+        elif diff == [-1, -1]:
+            return 8
 
 
     def moveAgent(self):
@@ -163,9 +190,9 @@ class Client(object):
                     #self.solver.board.initBoardSize(self.board.row, self.board.column)
                     #self.solver.board.board_scores = copy.copy(self.board.board_scores)
                     self.solver.set_board(self.board)
-                    print(self.board.row, self.board.column)
                     self.solver.state_init()
                     self.solver.set_state()
+                    self.solver.print_state_and_score()
 
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")

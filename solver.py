@@ -64,13 +64,46 @@ class Solver(object):
                 print(format(cell, '3d'), end="")
             print("")
 
-    def print_state_and_score(self):
-        for row in self.state:
-            for cell in row:
-                if cell < 0:
-                    print(format(0, '3d'), end="")
-                else:
-                    print(format(self.lake_score[cell], '3d'), end="")
+    def print_state_and_score(self, direction=0):
+        if direction == 0:
+            for row in self.state:
+                for cell in row:
+                    if cell < 0:
+                        print(format(0, '3d'), end="")
+                    else:
+                        print(format(self.lake_score[cell], '3d'), end="")
+                print("")
+            print("")
+            print("")
+        elif direction == 1:
+            for y in range(self.board.getBoardSize()[1]):
+                for x in range(self.board.getBoardSize()[0]):
+                    if self.state[x][y] < 0:
+                        print(format(0, '3d'), end="")
+                    else:
+                        print(format(self.lake_score[self.state[x][y]], '3d'), end="")
+                print("")
+            print("")
+            print("")
+        elif direction == 2:
+            for x in range(self.board.getBoardSize()[1])[::-1]:
+                for y in range(self.board.getBoardSize()[0]):
+                    if self.state[x][y] < 0:
+                        print(format(0, '3d'), end="")
+                    else:
+                        print(format(self.lake_score[self.state[x][y]], '3d'), end="")
+                print("")
+            print("")
+            print("")
+        elif direction == 3:
+            for y in range(self.board.getBoardSize()[1]):
+                for x in range(self.board.getBoardSize()[0])[::-1]:
+                    if self.state[x][y] < 0:
+                        print(format(0, '3d'), end="")
+                    else:
+                        print(format(self.lake_score[self.state[x][y]], '3d'), end="")
+                print("")
+            print("")
             print("")
 
 

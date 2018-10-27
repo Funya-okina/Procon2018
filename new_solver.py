@@ -1,6 +1,6 @@
 import sys
 import queue
-from control.Board import Board 
+from control.Board import Board
 import copy
 
 class NewSolver(object):
@@ -9,7 +9,7 @@ class NewSolver(object):
         self.state = []
         self.threshold = 0
         self.team = team
-    
+
     def calcScoreAverage(self):
         num_of_cells = 0
         for row in self.board.getBoardScores():
@@ -30,14 +30,14 @@ class NewSolver(object):
         elif self.team == 'B':
             my_board = copy.copy(self.board.team_b)
             enemy_board = copy.copy(self.board.team_a)
-        
+
         self.state = [[0] * self.board.getBoardSize()[1] for i in range(self.board.getBoardSize()[0])]
-        
+
         for x in range(self.board.getBoardSize()[0]):
             for y in range(self.board.getBoardSize()[1]):
                 if my_board[x][y]:
                     self.state[x][y] = 0
-                else:    
+                else:
                     if self.board.getBoardScores()[x][y] >= self.threshold:
                         if enemy_board[x][y]:
                             self.state[x][y] = 3
@@ -54,12 +54,13 @@ class NewSolver(object):
     def search_around(self, row, column):
         destination = ((0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1))
         que = []
+        board_size = self.board.getBoardSize()
         for a in destination:
             if (0 <= row + a[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] < self.board.getBoardSize()[1]) :
                 state_cache1 = copy.deepcopy(self.state)
                 first_step = self.state[row+a[0]][column+a[1]]
                 state_cache1[row+a[0]][column+a[1]] = 0
-                
+
                 for b in destination:
                     if (0 <= row + a[0] + b[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] + b[1] < self.board.getBoardSize()[1]):
                         state_cache2 = copy.deepcopy(state_cache1)
@@ -67,7 +68,7 @@ class NewSolver(object):
                         state_cache2[row+a[0]+b[0]][column+a[1]+b[1]] = 0
 
                         for c in destination:
-                            if (0 <= row + a[0] + b[0] + c[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] + b[1] + c[1] < self.board.getBoardSize()[1]):
+                            if (0 <= (row+a[0]+b[0]+c[0]) < board_size[0]) and (0 <= (column+a[1]+b[1]+c[1]) < board_size[1]):
                                 third_step = state_cache2[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]]
                                 que.append((first_step + second_step + third_step,
                                             self.board.getBoardScores()[row+a[0]][column+a[1]] + self.board.getBoardScores()[row+a[0]+b[0]][column+a[1]+b[1]] + self.board.getBoardScores()[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]],
@@ -90,7 +91,7 @@ class NewSolver(object):
         for a in practices:
             print(que[a[0]])
 
-                
+
 
 def call():
     solver = NewSolver('A')
@@ -105,7 +106,7 @@ def call():
             print(format(y, '3d'), end="")
         print("")
     print("")
-    
+
     for x in solver.state:
         for y in x:
             print(format(y, '3d'), end="")

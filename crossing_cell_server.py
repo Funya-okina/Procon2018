@@ -65,10 +65,10 @@ class Server(object):
         self.board.genScores(symmetry)
         self.board.setFirstAgentCell(agents_a)
         self.setUIBoard()
-        self.board.printBoardScore()
-        self.board.printBoardScore_sq(self.calcScoreAverage())
-        self.board.printTiles_A()
-        self.board.printTiles_B()
+        # self.board.printBoardScore()
+        # self.board.printBoardScore_sq(self.calcScoreAverage())
+        # self.board.printTiles_A()
+        # self.board.printTiles_B()
 
     def calcScoreAverage(self):
         return sum(map(sum, self.board.board_scores)) / ((self.board.row+1)*(self.board.column+1))
@@ -153,11 +153,20 @@ class Server(object):
         elif client_update['from'] == "B":
             self.turnBehavior[1] = True
             self.client_update_dict["B"] = client_update
+
         if all(self.turnBehavior):
             self.turnBehavior = [False, False]
-            self.webUi.setTurnConfirmView(True)
+            self.nextTurn()
+            # self.webUi.setTurnConfirmView(True)
 
     def nextTurn(self):
+        for i in range(2):
+            new_loc_a = self.client_update_dict["A"]["agent_location"][i]
+            if new_loc_a in self.client_update_dict["B"]["agent_location"]:
+                self.client_update_dict["A"]["agent_location"][i] = self.board.current_agent_cells_a[i]
+                index_b = self.client_update_dict["B"]["agent_location"].index(new_loc_a)
+                self.client_update_dict["B"]["agent_location"][index_b] = self.board.current_agent_cells_b[index_b]
+
         self.board.setCurrentAgentLocations(self.client_update_dict["A"]["agent_location"], "A")
         self.board.setCurrentAgentLocations(self.client_update_dict["B"]["agent_location"], "B")
         for x in self.remove_tiles:
