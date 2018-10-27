@@ -53,7 +53,7 @@ class Client(object):
             tile_color = "a-tile"
             agent_color = "a{}-present".format(self.agent_behavior_step)
             opponent_color = "b-tile"
-            my_tiles = copy.copy(self.board.team_a)
+            my_tiles = copy.deepcopy(self.board.team_a)
             opponent_tiles = copy.copy(self.board.team_b)
         elif self.team == "B":
             i = 1
@@ -191,8 +191,6 @@ class Client(object):
                     self.board.initBoardScores(rcv_dict['scores'])
                     self.setUIBoard()
 
-                    #self.solver.board.initBoardSize(self.board.row, self.board.column)
-                    #self.solver.board.board_scores = copy.copy(self.board.board_scores)
                     self.solver.set_board(self.board)
                     self.solver.state_init()
                     self.solver.set_state()
@@ -201,8 +199,8 @@ class Client(object):
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
-                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
-                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    self.board.team_a = copy.deepcopy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.deepcopy(rcv_dict['tiles_b'])
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
                     #print(self.solver.get_state())
@@ -211,8 +209,8 @@ class Client(object):
                 elif order == 'reject_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
-                    self.board.team_a = copy.copy(rcv_dict['tiles_a'])
-                    self.board.team_b = copy.copy(rcv_dict['tiles_b'])
+                    self.board.team_a = copy.deepcopy(rcv_dict['tiles_a'])
+                    self.board.team_b = copy.deepcopy(rcv_dict['tiles_b'])
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
 
