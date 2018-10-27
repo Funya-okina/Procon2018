@@ -160,8 +160,10 @@ class Client(object):
                     self.board.initBoardScores(rcv_dict['scores'])
                     self.setUIBoard()
 
-                    self.solver.board.initBoardSize(self.board.row, self.board.column)
-                    self.solver.board.board_scores = copy.copy(self.board.board_scores)
+                    #self.solver.board.initBoardSize(self.board.row, self.board.column)
+                    #self.solver.board.board_scores = copy.copy(self.board.board_scores)
+                    self.solver.set_board(self.board)
+                    print(self.board.row, self.board.column)
                     self.solver.state_init()
                     self.solver.set_state()
 

@@ -13,7 +13,8 @@ class Solver(object):
         return sum(map(sum, self.board.board_scores)) / ((self.board.row+1)*(self.board.column+1))
 
     def state_init(self):
-        self.state = [[0] * self.board.getBoardSize()[0] for i in range(self.board.getBoardSize()[1])]
+        self.state = [[0] * self.board.getBoardSize()[1] for i in range(self.board.getBoardSize()[0])]
+        print(len(self.state), len(self.state))
         for x in range(self.board.getBoardSize()[0]):
             for y in range(self.board.getBoardSize()[1]):
                 if self.board.getBoardScores()[x][y] < self.calcScoreAverage():
