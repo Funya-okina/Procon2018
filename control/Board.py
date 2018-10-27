@@ -5,8 +5,8 @@ import numpy as np
 
 class Board:
     def __init__(self):
-        self.row = 11
-        self.column = 11
+        self.row = 12
+        self.column = 12
         self.first_agent_cells_a = [[0, 0], [0, 1]]
         self.first_agent_cells_b = [[1, 0], [1, 1]]
         self.board_scores = []
@@ -20,6 +20,7 @@ class Board:
         self.column = int(column)
         self.team_a = [[0] * column for i in range(row)]
         self.team_b = [[0] * column for i in range(row)]
+
     def initBoardScores(self, scores):
         self.board_scores = scores
 
@@ -78,8 +79,8 @@ class Board:
         return self.board_scores
 
     def remove(self, cell):
-        self.team_a[cell[0], cell[1]] = 0
-        self.team_b[cell[0], cell[1]] = 0
+        self.team_a[cell[0]][cell[1]] = 0
+        self.team_b[cell[0]][cell[1]] = 0
 
     def printBoardScore(self, size=False):
         if size:
@@ -88,6 +89,16 @@ class Board:
             for score in row_socres:
                 print("{: 3}".format(score), end="")
             print("")
+
+    def printBoardScore_sq(self, level):
+        for row_socres in self.board_scores:
+            for score in row_socres:
+                if score > level:
+                    print("██", end="")
+                else:
+                    print("  ", end="")
+            print("")
+
 
     def printTiles_A(self, size=False):
         if size:

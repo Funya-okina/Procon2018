@@ -8,6 +8,7 @@ import socket
 import time
 import math
 import copy
+from solver import Solver
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
@@ -30,6 +31,8 @@ class Client(object):
 
         self.board = Board()
         self.playng_thread = None
+
+        self.solver = Solver()
 
         # connections
         self.team = "A" # "A" or "B"
@@ -156,25 +159,27 @@ class Client(object):
                     self.board.setFirstAgentCell(rcv_dict['agents'][0])
                     self.board.initBoardScores(rcv_dict['scores'])
                     self.setUIBoard()
+
+                    self.solver.board.initBoardSize(self.board.row, self.board.column)
+                    self.solver.board.board_scores = copy.copy(self.board.board_scores)
+                    self.solver.state_init()
+                    self.solver.set_state()
+
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
                     self.board.team_a = copy.copy(rcv_dict['tiles_a'])
                     self.board.team_b = copy.copy(rcv_dict['tiles_b'])
-                    if self.team == "A":
-                        self.board.printTiles_A()
-                        self.board.printTiles_B()
-                        print(self.board.getCurrentAgentLocations())
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+
+                    #print(self.solver.get_state())
+                    self.solver.print_state_and_score()
+
                 elif order == 'reject_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
                     self.board.team_a = copy.copy(rcv_dict['tiles_a'])
                     self.board.team_b = copy.copy(rcv_dict['tiles_b'])
-                    if self.team == "A":
-                        self.board.printTiles_A()
-                        self.board.printTiles_B()
-                        print(self.board.getCurrentAgentLocations())
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
 
 

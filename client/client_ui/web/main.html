@@ -39,6 +39,10 @@
   </label>
 
   <Hr>
+  <label for="remove-mode">
+    isRemoveMode:
+    <input type="checkbox" id="remove-mode" v-model="isRemoveMode">
+  </label>
   <button v-on:click="boardRotate += 90;">回転</button>
   <table
     class="board"
@@ -92,7 +96,6 @@
       </td>
     </tr>
   </table>
-  <button id="send-action" v-on:click="sendAction()">send action</button>
 </div>
 
 </body>

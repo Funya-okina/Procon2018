@@ -4,6 +4,7 @@ const app = new Vue({
     el: '#app',
     data: {
         isDisplaying: false,
+        isRemoveMode: false,
         cellScores: [],
         boardRotate: 0,
         port: 25565,
@@ -24,7 +25,8 @@ const app = new Vue({
         },
 
         cellClicked: function (row, column) {
-            eel.cellClicked(row, column);
+            eel.cellClicked(row, column, this.isRemoveMode);
+            this.isRemoveMode = false;
         },
 
         cellMouseover: function (row, column) {
@@ -52,8 +54,6 @@ const app = new Vue({
                     || (this.mouseoverCell.column === column && column !== null)
                 );
         },
-        sendAction: function() {
-        }
     }
 });
 
@@ -85,18 +85,6 @@ function showBoard(cellScores, firstAgentsA, firstAgentsB) {
 function editCellAttrs(row, column, attr, value) {
     const editCell = app.cellScores[row][column];
     switch (attr) {
-        case 'a0-present':
-            editCell.isA0Present = value;
-            break;
-        case 'a1-present':
-            editCell.isA1Present = value;
-            break;
-        case 'b0-present':
-            editCell.isB0Present = value;
-            break;
-        case 'b1-present':
-            editCell.isB1Present = value;
-            break;
         case 'a-area':
             editCell.isAArea = value;
             break;
@@ -108,6 +96,18 @@ function editCellAttrs(row, column, attr, value) {
             break;
         case 'b-tile':
             editCell.isBTile = value;
+            break;
+        case 'a0-present':
+            editCell.isA0Present = value;
+            break;
+        case 'a1-present':
+            editCell.isA1Present = value;
+            break;
+        case 'b0-present':
+            editCell.isB0Present = value;
+            break;
+        case 'b1-present':
+            editCell.isB1Present = value;
             break;
     }
 }
