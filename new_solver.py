@@ -25,11 +25,11 @@ class NewSolver(object):
 
     def gen_state_list(self):
         if self.team == 'A':
-            my_board = copy.copy(self.board.team_a)
-            enemy_board = copy.copy(self.board.team_b)
+            my_board = copy.deepcopy(self.board.team_a)
+            enemy_board = copy.deepcopy(self.board.team_b)
         elif self.team == 'B':
-            my_board = copy.copy(self.board.team_b)
-            enemy_board = copy.copy(self.board.team_a)
+            my_board = copy.deepcopy(self.board.team_b)
+            enemy_board = copy.deepcopy(self.board.team_a)
 
         self.state = [[0] * self.board.getBoardSize()[1] for i in range(self.board.getBoardSize()[0])]
 
@@ -77,8 +77,6 @@ class NewSolver(object):
         practice = [0, 0] #[forのiを代入, 評価値を代入]
         practices = []
 
-        print(len(que))
-
         for i, element in enumerate(que):
             if element[0] > practice[1]:
                 practice = [i, element[0]]
@@ -88,11 +86,15 @@ class NewSolver(object):
                 practice = [i, element[0]]
                 practices.append(practice)
 
+        best_practice = [0, (0, 0)]
         for a in practices:
-            print(que[a[0]])
+            if que[a[0]][1] > best_practice[0]:
+                best_practice = [que[a[0]][1], que[a[0]][2][1]]
+        return [row + best_practice[1][0], column + best_practice[1][1]]
 
 
 
+#これより下デバッグ用テスト実行コード
 def call():
     solver = NewSolver('A')
     solver.board.initBoardSize(11, 11)
@@ -113,7 +115,7 @@ def call():
         print("")
     print("")
 
-    solver.search_around(3, 3)
+    print(solver.search_around(3, 3))
 
 
 if __name__ == '__main__':
