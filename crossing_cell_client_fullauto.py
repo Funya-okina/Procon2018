@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from client.client_ui.webUi import WebUi
+from client_solver.client_ui.webUi import WebUi
 from control.Board import Board
 from threading import Thread
 import json
@@ -8,6 +8,7 @@ import socket
 import time
 import math
 import copy
+from new_solver import NewSolver
 
 np.set_printoptions(threshold=np.inf)
 argv = sys.argv
@@ -32,6 +33,8 @@ class Client(object):
         self.board = Board()
         self.playng_thread = None
 
+        self.solving_engine = NewSolver()
+
         # connections
         self.team = "A" # "A" or "B"
         self.client_socket = None
@@ -44,47 +47,41 @@ class Client(object):
     def isAroundCell(self, cell1, cell2):
         return math.sqrt((cell1[0]-cell2[0])**2+(cell1[1]-cell2[1])**2) <= math.sqrt(2)
 
-    def wasClicked(self, board_row, board_column, is_remove_mode):
+    def wasClicked(self, board_row, board_column):
         if self.team == "A":
             i = 0
             tile_color = "a-tile"
             agent_color = "a{}-present".format(self.agent_behavior_step)
             opponent_color = "b-tile"
-            my_tiles = copy.copy(self.board.team_a)
-            opponent_tiles = copy.copy(self.board.team_b)
+            my_tiles = copy.deepcopy(self.board.team_a)
+            opponent_tiles = copy.deepcopy(self.board.team_b)
         elif self.team == "B":
             i = 1
             tile_color = "b-tile"
             agent_color = "b{}-present".format(self.agent_behavior_step)
             opponent_color = "a-tile"
-            my_tiles = copy.copy(self.board.team_b)
-            opponent_tiles = copy.copy(self.board.team_a)
+            my_tiles = copy.deepcopy(self.board.team_b)
+            opponent_tiles = copy.deepcopy(self.board.team_a)
 
         agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
         if self.isAroundCell([board_row, board_column], agent):
 
             if self.agent_behavior_step >= 1:
-                if is_remove_mode:
-                    if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
+                if opponent_tiles[board_row][board_column] == 1:
+                    if opponent_tiles[board_row][board_column] == 1:
                         self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
                         self.remove_tile_locations.append([board_row, board_column])
                         self.webUi.editCellAttrs(board_row, board_column, opponent_color, False)
-                    else:
-                        print("選択したセルは除去できません")
-                        return
                 else:
-                    if opponent_tiles[board_row][board_column] == 1:
-                        print("選択したセルに移動するためには除去を行う必要があります")
-                        return
-                    else:
-                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
-                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
-                        self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                    self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+                    self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                    self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
 
                 diff = [self.new_agent_locations[1][0]-agent[0],
                         self.new_agent_locations[1][1]-agent[1]]
 
                 self.agent_behavior_step = 0
+                print("黒:", self.chooseTramp(diff))
 
                 json_data = json.dumps({
                     "order": "client_update",
@@ -96,26 +93,20 @@ class Client(object):
                 self.new_agent_locations = [[0, 0], [0, 0]]
                 self.remove_tile_locations = []
             else:
-                if is_remove_mode:
-                    if opponent_tiles[board_row][board_column] == 1 or my_tiles[board_row][board_column] == 1:
+                if opponent_tiles[board_row][board_column] == 1:
+                    if opponent_tiles[board_row][board_column] == 1:
                         self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
                         self.remove_tile_locations.append([board_row, board_column])
                         self.webUi.editCellAttrs(board_row, board_column, opponent_color, False)
-                    else:
-                        print("選択したセルは除去できません")
-                        return
                 else:
-                    if opponent_tiles[board_row][board_column] == 1:
-                        print("選択したセルに移動するためには除去を行う必要があります")
-                        return
-                    else:
-                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
-                        self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
-                        self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
+                    self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
+                    self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                    self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
 
                 self.agent_behavior_step += 1
                 diff = [self.new_agent_locations[0][0]-agent[0],
                         self.new_agent_locations[0][1]-agent[1]]
+                print("赤:", self.chooseTramp(diff))
         else:
             print("八近傍以外のセルには移動できません")
 
@@ -170,6 +161,9 @@ class Client(object):
         self.receive_thread.start()
         self.send(self.team)
 
+        # これよりソルバー
+        self.solving_engine.set_team(self.team)
+
     def recieve(self):
         while True:
             try:
@@ -182,13 +176,31 @@ class Client(object):
                     self.board.initBoardScores(rcv_dict['scores'])
                     self.setUIBoard()
 
+                    # これよりソルバー
+                    self.solving_engine.update_board(self.board)
+                    self.solving_engine.calcScoreAverage()
+
+                    self.solving_engine.gen_state_list()
+
+                    agent0_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[0])
+                    self.wasClicked(*agent0_next)
+                    agent1_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[1])
+                    self.wasClicked(*agent1_next)
+
                 elif order == 'next_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][1], "B")
                     self.board.team_a = copy.copy(rcv_dict['tiles_a'])
                     self.board.team_b = copy.copy(rcv_dict['tiles_b'])
                     self.webUi.updateCellAttrs(self.board.team_a, self.board.team_b, self.board.getCurrentAgentLocations())
+                    # ソルバー
+                    self.solving_engine.update_board(self.board)
+                    self.solving_engine.gen_state_list()
 
+                    agent0_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[0])
+                    self.wasClicked(*agent0_next)
+                    agent1_next = self.solving_engine.search_around(*self.board.current_agent_cells_a[1])
+                    self.wasClicked(*agent1_next)
 
                 elif order == 'reject_turn':
                     self.board.setCurrentAgentLocations(rcv_dict['agents'][0], "A")
