@@ -72,6 +72,7 @@ class Client(object):
                         self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
                         self.remove_tile_locations.append([board_row, board_column])
                         self.webUi.editCellAttrs(board_row, board_column, opponent_color, False)
+                        self.webUi.editCellAttrs(board_row, board_column, tile_color, False)
                     else:
                         print("選択したセルは除去できません")
                         return
@@ -80,8 +81,9 @@ class Client(object):
                         print("選択したセルに移動するためには除去を行う必要があります")
                         return
                     else:
-                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
                         self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        self.webUi.editCellAttrs(agent[0], agent[1], agent_color, False)
+                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
                         self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
 
                 diff = [self.new_agent_locations[1][0]-agent[0],
@@ -105,6 +107,7 @@ class Client(object):
                         self.new_agent_locations[self.agent_behavior_step] = [agent[0], agent[1]]
                         self.remove_tile_locations.append([board_row, board_column])
                         self.webUi.editCellAttrs(board_row, board_column, opponent_color, False)
+                        self.webUi.editCellAttrs(board_row, board_column, tile_color, False)
                     else:
                         print("選択したセルは除去できません")
                         return
@@ -113,8 +116,9 @@ class Client(object):
                         print("選択したセルに移動するためには除去を行う必要があります")
                         return
                     else:
-                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
                         self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
+                        self.webUi.editCellAttrs(agent[0], agent[1], agent_color, False)
+                        self.webUi.editCellAttrs(agent[0], agent[1], tile_color, True)
                         self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
 
                 self.agent_behavior_step += 1
