@@ -39,12 +39,17 @@
   </label>
 
   <Hr>
-
   <label for="remove-mode">
-      isRemoveMode:
-      <input type="checkbox" id="remove-mode" v-model="isRemoveMode">
+    isRemoveMode:
+    <input type="checkbox" id="remove-mode" v-model="isRemoveMode">
   </label>
-  <table class="board" v-if="isDisplaying" v-cloak>
+  <button v-on:click="boardRotate += 90;">回転</button>
+  <table
+    class="board"
+    v-if="isDisplaying"
+    v-cloak
+    v-bind:style="{transform: `rotate(${boardRotate}deg)`}"
+  >
     <tr>
       <td class="guide-cell"></td>
       <td

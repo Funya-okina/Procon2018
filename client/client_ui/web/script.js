@@ -6,6 +6,7 @@ const app = new Vue({
         isDisplaying: false,
         isRemoveMode: false,
         cellScores: [],
+        boardRotate: 0,
         port: 25565,
         team: "A",
         mouseoverCell: {

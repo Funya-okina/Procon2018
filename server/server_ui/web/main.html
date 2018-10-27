@@ -101,7 +101,13 @@
         <button id="next-confirm-no" v-on:click="rejectTurn()">No</button>
     </div>
   <Hr>
-  <table class="board" v-if="isDisplaying" v-cloak>
+  <button v-on:click="boardRotate += 90;">回転</button>
+  <table
+    class="board"
+    v-if="isDisplaying"
+    v-cloak
+    v-bind:style="{transform: `rotate(${boardRotate}deg)`}"
+  >
     <tr>
       <td class="guide-cell"></td>
       <td
