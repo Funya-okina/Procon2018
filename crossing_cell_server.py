@@ -65,10 +65,10 @@ class Server(object):
         self.board.genScores(symmetry)
         self.board.setFirstAgentCell(agents_a)
         self.setUIBoard()
-        self.board.printBoardScore()
-        self.board.printBoardScore_sq(self.calcScoreAverage())
-        self.board.printTiles_A()
-        self.board.printTiles_B()
+        # self.board.printBoardScore()
+        # self.board.printBoardScore_sq(self.calcScoreAverage())
+        # self.board.printTiles_A()
+        # self.board.printTiles_B()
 
     def calcScoreAverage(self):
         return sum(map(sum, self.board.board_scores)) / ((self.board.row+1)*(self.board.column+1))
