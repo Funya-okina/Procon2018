@@ -90,7 +90,6 @@ class Client(object):
                         self.new_agent_locations[1][1]-agent[1]]
 
                 self.agent_behavior_step = 0
-                print("黒:", self.chooseTramp(diff))
 
                 json_data = json.dumps({
                     "order": "client_update",
@@ -124,7 +123,6 @@ class Client(object):
                 self.agent_behavior_step += 1
                 diff = [self.new_agent_locations[0][0]-agent[0],
                         self.new_agent_locations[0][1]-agent[1]]
-                print("赤:", self.chooseTramp(diff))
         else:
             print("八近傍以外のセルには移動できません")
 
