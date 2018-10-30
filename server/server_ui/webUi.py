@@ -50,11 +50,11 @@ class WebUi:
         self.events[event_name] = func
 
     @staticmethod
-    def showWindow():
+    def showWindow(port):
         web_app_options = {
             'mode': 'chrome-app',
             'host': 'localhost',
-            'port': 8000
+            'port': port
         }
         eel.start("main.html", options=web_app_options)
         eel.closeWindow()
