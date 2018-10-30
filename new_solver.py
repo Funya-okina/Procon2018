@@ -60,13 +60,13 @@ class NewSolver(object):
         que = []
         board_size = self.board.getBoardSize()
         for a in destination:
-            if (0 <= row + a[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] < self.board.getBoardSize()[1]) :
+            if (0 <= row + a[0] < board_size()[0]) and (0 <= column + a[1] < board_size()[1]) :
                 state_cache1 = copy.deepcopy(self.state)
                 first_step = self.state[row+a[0]][column+a[1]]
                 state_cache1[row+a[0]][column+a[1]] = 0
 
                 for b in destination:
-                    if (0 <= row + a[0] + b[0] < self.board.getBoardSize()[0]) and (0 <= column + a[1] + b[1] < self.board.getBoardSize()[1]):
+                    if (0 <= row + a[0] + b[0] < board_size()[0]) and (0 <= column + a[1] + b[1] < board_size()[1]):
                         state_cache2 = copy.deepcopy(state_cache1)
                         second_step = state_cache1[row+a[0]+b[0]][column+a[1]+b[1]]
                         state_cache2[row+a[0]+b[0]][column+a[1]+b[1]] = 0
@@ -75,7 +75,9 @@ class NewSolver(object):
                             if (0 <= (row+a[0]+b[0]+c[0]) < board_size[0]) and (0 <= (column+a[1]+b[1]+c[1]) < board_size[1]):
                                 third_step = state_cache2[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]]
                                 que.append((first_step + second_step + third_step,
-                                            self.board.getBoardScores()[row+a[0]][column+a[1]] + self.board.getBoardScores()[row+a[0]+b[0]][column+a[1]+b[1]] + self.board.getBoardScores()[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]],
+                                            self.board.getBoardScores()[row+a[0]][column+a[1]] \
+                                                    + self.board.getBoardScores()[row+a[0]+b[0]][column+a[1]+b[1]] \
+                                                    + self.board.getBoardScores()[row+a[0]+b[0]+c[0]][column+a[1]+b[1]+c[1]],
                                             (a, b, c)
                                             ))
         practice = [0, 0] #[forのiを代入, 評価値を代入]
@@ -97,7 +99,7 @@ class NewSolver(object):
                 best_practices.append([que[a[0]][1], que[a[0]][2][0]])
             elif que[a[0]][1] == best_practices[0][0]:
                 best_practices.append([que[a[0]][1], que[a[0]][2][0]])
-        
+
         num_run = random.randrange(len(best_practices))
         return [row + best_practices[num_run][1][0], column + best_practices[num_run][1][1]]
 
