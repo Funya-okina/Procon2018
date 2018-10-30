@@ -65,7 +65,10 @@ class Client(object):
 
         agent = self.board.getCurrentAgentLocations()[i][self.agent_behavior_step]
         if self.isAroundCell([board_row, board_column], agent):
+<<<<<<< HEAD
+=======
 
+>>>>>>> c31df700c5f2c9f0a203204687719ed11b3d638a
             diff = [board_row-agent[0],
                     board_column-agent[1]]
             if self.agent_behavior_step >= 1:
@@ -80,7 +83,10 @@ class Client(object):
                     self.webUi.editCellAttrs(board_row, board_column, agent_color, True)
                     self.new_agent_locations[self.agent_behavior_step] = [board_row, board_column]
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> c31df700c5f2c9f0a203204687719ed11b3d638a
 
                 self.agent_behavior_step = 0
                 print("黒:", self.chooseTramp(diff))

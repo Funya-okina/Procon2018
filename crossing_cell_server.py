@@ -13,13 +13,15 @@ from threading import Thread
 
 np.set_printoptions(threshold=np.inf)
 
+argv = sys.argv
 
 class Server(object):
 
-    def __init__(self, parent=None):
+    def __init__(self, port):
 
         self.webUi = WebUi()
 
+        self.port_ui = port
         self.webUi.addEvent("gameStart", self.gameStart)
         self.webUi.addEvent("genScores", self.genScores)
         self.webUi.addEvent("getMyIPAddress", self.getMyIPAddress)
@@ -112,7 +114,7 @@ class Server(object):
         qr.encoder(data, "{}/QRcodes".format(os.getcwd()), datetime.now().strftime("%Y%m%d%H%M%S_QR.png"))
 
     def showWeb(self):
-        self.webUi.showWindow()
+        self.webUi.showWindow(self.port_ui)
 
     def setUIBoard(self):
         self.webUi.showBoard(self.board.board_scores, self.board.first_agent_cells_a, self.board.first_agent_cells_b)
@@ -256,6 +258,6 @@ class Server(object):
 
 
 if __name__ == "__main__":
-    window = Server()
+    window = Server(int(argv[1]))
     window.showWeb()
     sys.exit()
